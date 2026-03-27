@@ -29,11 +29,6 @@
     --glass-border: rgba(255,255,255,0.15);
   }
 
-  .sunny-mode {
-    --glass-bg: rgba(255,255,255,0.18);
-    --glass-border: rgba(255,255,255,0.25);
-  }
-
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   body {
@@ -46,42 +41,76 @@
     position: relative;
   }
 
-  /* Sunny calming background - only when toggled */
-  body.sunny-mode::before {
+  /* Calming Background Layers - 3 modes */
+  body.calm-leaves::before,
+  body.calm-clouds::before,
+  body.calm-rain::before {
     content: '';
     position: fixed;
     inset: 0;
     z-index: -1;
-    background: 
-      radial-gradient(circle at 30% 20%, rgba(255,240,180,0.18) 0%, transparent 50%),
-      radial-gradient(circle at 70% 60%, rgba(180,255,200,0.15) 0%, transparent 60%);
     pointer-events: none;
-    opacity: 0.9;
+  }
+
+  /* 1. Gentle Leaves */
+  body.calm-leaves::before {
+    background: radial-gradient(circle at 30% 20%, rgba(255,240,180,0.25) 0%, transparent 50%),
+                radial-gradient(circle at 70% 60%, rgba(180,255,200,0.22) 0%, transparent 60%);
     animation: sunnyLight 28s linear infinite;
+    opacity: 0.95;
   }
-
-  @keyframes sunnyLight {
-    0% { transform: translate(0, 0) rotate(0deg); }
-    100% { transform: translate(12px, -15px) rotate(2deg); }
-  }
-
-  body.sunny-mode::after {
+  body.calm-leaves::after {
     content: '🍃 🌿 🍂 🌱';
     position: fixed;
     inset: 0;
     z-index: -1;
-    font-size: 32px;
-    opacity: 0.06;
-    pointer-events: none;
-    animation: floatingLeaves 45s linear infinite;
+    font-size: 38px;
+    opacity: 0.12;
+    animation: floatingLeaves 42s linear infinite;
     white-space: pre;
-    overflow: hidden;
   }
 
-  @keyframes floatingLeaves {
-    0% { transform: translateY(120vh) rotate(0deg); }
-    100% { transform: translateY(-120vh) rotate(380deg); }
+  /* 2. Soft Clouds */
+  body.calm-clouds::before {
+    background: radial-gradient(circle at 20% 30%, rgba(240,240,255,0.35) 0%, transparent 70%),
+                radial-gradient(circle at 80% 50%, rgba(220,240,255,0.30) 0%, transparent 60%);
+    animation: slowDrift 65s linear infinite;
+    opacity: 0.9;
   }
+  body.calm-clouds::after {
+    content: '☁️ ☁️ ☁️';
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    font-size: 52px;
+    opacity: 0.08;
+    animation: floatingClouds 70s linear infinite;
+    white-space: pre;
+  }
+
+  /* 3. Misty Rain */
+  body.calm-rain::before {
+    background: linear-gradient(to bottom, rgba(180,220,255,0.18) 0%, transparent 80%);
+    animation: rainMist 18s linear infinite;
+    opacity: 0.85;
+  }
+  body.calm-rain::after {
+    content: '🌧️';
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    font-size: 22px;
+    opacity: 0.09;
+    animation: lightRain 12s linear infinite;
+    white-space: pre;
+  }
+
+  @keyframes sunnyLight { 0% { transform: translate(0,0) rotate(0deg); } 100% { transform: translate(12px,-15px) rotate(2deg); } }
+  @keyframes floatingLeaves { 0% { transform: translateY(120vh) rotate(0deg); } 100% { transform: translateY(-120vh) rotate(380deg); } }
+  @keyframes slowDrift { 0% { transform: translate(0,0); } 100% { transform: translate(20px,-25px); } }
+  @keyframes floatingClouds { 0% { transform: translateY(100vh) rotate(0deg); } 100% { transform: translateY(-100vh) rotate(180deg); } }
+  @keyframes rainMist { 0% { transform: translateY(0); } 100% { transform: translateY(-30px); } }
+  @keyframes lightRain { 0% { transform: translateY(0); } 100% { transform: translateY(-80vh); } }
 
   #main-view { display: flex; height: 100vh; width: 100%; }
 
@@ -255,7 +284,7 @@
           <span id="sort-label">chronological</span>
         </button>
         <button class="theme-toggle" onclick="toggleNightMode()" id="night-btn"><span id="night-icon">🌙</span></button>
-        <button class="theme-toggle" onclick="toggleSunnyMode()" id="sunny-btn"><span id="sunny-icon">☀️</span></button>
+        <button class="theme-toggle" onclick="cycleCalmMode()" id="calm-btn"><span id="calm-icon">🌫️</span></button>
       </div>
     </div>
     <div class="gallery-grid" id="gallery-grid"></div>
@@ -287,13 +316,14 @@ let galleryPinned = new Set();
 let showPinnedFirst = false;
 let pendingImageData = [];
 let currentGalleryIndex = 0;
+let calmMode = 0; // 0 = off, 1 = leaves, 2 = clouds, 3 = rain
 
 function saveData() {
   localStorage.setItem('archive_posts', JSON.stringify(posts));
   localStorage.setItem('archive_gallery', JSON.stringify(galleryImages));
   localStorage.setItem('archive_pinned', JSON.stringify(Array.from(galleryPinned)));
   localStorage.setItem('archive_night', document.documentElement.classList.contains('night-mode') ? '1' : '0');
-  localStorage.setItem('archive_sunny', document.body.classList.contains('sunny-mode') ? '1' : '0');
+  localStorage.setItem('archive_calm', calmMode.toString());
 }
 
 function loadData() {
@@ -308,11 +338,41 @@ function loadData() {
     document.documentElement.classList.add('night-mode');
     document.getElementById('night-icon').textContent = '☀️';
   }
-  if (localStorage.getItem('archive_sunny') === '1') {
-    document.body.classList.add('sunny-mode');
+
+  const savedCalm = parseInt(localStorage.getItem('archive_calm') || '0');
+  if (savedCalm > 0) {
+    calmMode = savedCalm;
+    applyCalmMode();
   }
 }
 
+function applyCalmMode() {
+  document.body.classList.remove('calm-leaves', 'calm-clouds', 'calm-rain');
+  if (calmMode === 1) document.body.classList.add('calm-leaves');
+  else if (calmMode === 2) document.body.classList.add('calm-clouds');
+  else if (calmMode === 3) document.body.classList.add('calm-rain');
+}
+
+function cycleCalmMode() {
+  calmMode = (calmMode + 1) % 4;
+  applyCalmMode();
+  document.getElementById('calm-icon').textContent = calmMode === 0 ? '🌫️' : (calmMode === 1 ? '🍃' : (calmMode === 2 ? '☁️' : '🌧️'));
+  saveData();
+}
+
+function toggleNightMode() {
+  const night = document.documentElement.classList.toggle('night-mode');
+  document.getElementById('night-icon').textContent = night ? '☀️' : '🌙';
+  saveData();
+}
+
+function closeGalleryPage() {
+  document.getElementById('gallery-page').classList.remove('active');
+  document.getElementById('main-view').style.display = 'flex';
+  document.querySelectorAll('.gallery-item').forEach(item => item.classList.remove('text-visible'));
+}
+
+// Rest of functions (rendering, publishing, etc.)
 function seedData() {
   if (posts.length > 0) return;
   const now = Date.now(), day = 86400000;
@@ -347,24 +407,7 @@ function getSortedImages() {
   return imgs;
 }
 
-function toggleNightMode() {
-  const night = document.documentElement.classList.toggle('night-mode');
-  document.getElementById('night-icon').textContent = night ? '☀️' : '🌙';
-  saveData();
-}
-
-function toggleSunnyMode() {
-  document.body.classList.toggle('sunny-mode');
-  saveData();
-}
-
-function closeGalleryPage() {
-  document.getElementById('gallery-page').classList.remove('active');
-  document.getElementById('main-view').style.display = 'flex';
-  document.querySelectorAll('.gallery-item').forEach(item => item.classList.remove('text-visible'));
-}
-
-function renderPosts() {
+function renderPosts() { /* same as previous versions */ 
   const c = document.getElementById('posts-container');
   c.innerHTML = '';
   const sorted = [...posts].sort((a,b) => a.timestamp - b.timestamp);
