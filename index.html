@@ -13,7 +13,7 @@
     --border: #c8c4bc;
     --accent: #c0392b;
     --panel-left: 220px;
-    --panel-right: 500px;
+    --panel-right: 680px;   /* ← widened so the gallery now stretches all the way over to where the red X was */
     --mono: 'IBM Plex Mono', monospace;
     --glass-bg: rgba(255,255,255,0.12);
     --glass-border: rgba(255,255,255,0.18);
@@ -446,8 +446,6 @@ function animateCalmMode() {
 function cycleCalmMode() {
   calmMode=(calmMode+1)%4;
   applyCalmMode();
-  // Updated icons – the first one is now a clear cloud ☁️ (suggests calm animated backgrounds / nature scenes)
-  // The rest match the actual animation that will play
   const icons = ['☁️', '🍃', '🌧️', '✨'];
   document.getElementById('calm-icon').textContent = icons[calmMode];
   saveData();
