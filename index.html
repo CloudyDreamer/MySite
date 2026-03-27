@@ -67,7 +67,7 @@
   }
 
   #panel-left { width: var(--panel-left); min-width: var(--panel-left); height: 100vh; display: flex; flex-direction: column; padding: 28px 20px; overflow-y: auto; border-right: none; }
-  #panel-mid { flex: 1; height: 100vh; overflow-y: scroll; padding: 28px 28px 80px; border-right: none; }
+  #panel-mid { flex: 1; height: 100vh; overflow-y: scroll; padding: 28px 40px 100px; border-right: none; max-width: 680px; margin: 0 auto; }
   #panel-right { width: var(--panel-right); min-width: var(--panel-right); height: 100vh; overflow-y: scroll; border-left: none; }
 
   .site-name { font-size: 22px; font-weight: 500; letter-spacing: -0.02em; margin-bottom: 14px; }
@@ -145,11 +145,15 @@
   .gallery-item:hover .pin-btn { opacity: 1; }
   .pin-btn:hover, .pin-btn.pinned-active { background: var(--ink); color: var(--bg); opacity: 1; }
 
-  .post { margin-bottom: 48px; padding-bottom: 40px; border-bottom: 1px solid var(--border); }
+  .post { margin-bottom: 48px; padding-bottom: 40px; border-bottom: 1px solid var(--border); max-width: 620px; }
   .post-meta { font-size: 10px; color: var(--muted); margin-bottom: 14px; }
   .post-text { font-size: 13px; line-height: 1.85; white-space: pre-wrap; font-weight: 300; }
 
-  .compose-bar { position: fixed; bottom: 0; left: var(--panel-left); right: var(--panel-right); background: var(--glass-bg); backdrop-filter: blur(20px); border-top: 1px solid var(--glass-border); padding: 12px 28px; display: flex; gap: 10px; z-index: 200; }
+  .compose-bar { 
+    position: fixed; bottom: 0; left: var(--panel-left); right: var(--panel-right); 
+    background: var(--glass-bg); backdrop-filter: blur(20px); border-top: 1px solid var(--glass-border); 
+    padding: 12px 28px; display: flex; gap: 10px; z-index: 200; 
+  }
   .compose-area { flex: 1; font-family: var(--mono); font-size: 12px; background: transparent; border: none; outline: none; resize: none; color: var(--ink); min-height: 36px; max-height: 120px; line-height: 1.6; }
   .compose-area::placeholder { color: var(--muted); }
   .compose-actions { display: flex; flex-direction: column; gap: 6px; align-items: flex-end; }
@@ -185,17 +189,6 @@
 
   <main id="panel-mid">
     <div id="posts-container"></div>
-    <div class="compose-bar">
-      <div style="flex:1;display:flex;flex-direction:column;gap:6px;">
-        <textarea class="compose-area" id="compose-text" rows="2" placeholder="write something..."></textarea>
-        <div class="compose-preview" id="compose-preview"></div>
-      </div>
-      <div class="compose-actions">
-        <button class="compose-btn" onclick="publishPost()">POST</button>
-        <button class="compose-img-btn" onclick="document.getElementById('file-input').click()">+ IMG</button>
-      </div>
-    </div>
-    <input type="file" id="file-input" accept="image/*" multiple onchange="handleImageSelect(event)">
   </main>
 
   <aside id="panel-right">
@@ -442,7 +435,7 @@ function closeGalleryPage() {
 }
 
 function renderGalleryPage() {
-  // Placeholder for full gallery view - you can expand later
+  // Placeholder - expand later if needed
 }
 
 function handleImageSelect(event) {
