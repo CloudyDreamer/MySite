@@ -19,7 +19,6 @@
     --glass-border: rgba(255,255,255,0.18);
   }
 
-  /* NIGHT MODE OVERRIDES */
   .night-mode {
     --bg: #0a0a0a;
     --ink: #f0f0f0;
@@ -28,6 +27,11 @@
     --accent: #ff5e4f;
     --glass-bg: rgba(255,255,255,0.08);
     --glass-border: rgba(255,255,255,0.15);
+  }
+
+  .sunny-mode {
+    --glass-bg: rgba(255,255,255,0.18);
+    --glass-border: rgba(255,255,255,0.25);
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -39,17 +43,50 @@
     height: 100vh;
     overflow: hidden;
     transition: background 0.4s ease;
+    position: relative;
+  }
+
+  /* Sunny calming background - only when toggled */
+  body.sunny-mode::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background: 
+      radial-gradient(circle at 30% 20%, rgba(255,240,180,0.18) 0%, transparent 50%),
+      radial-gradient(circle at 70% 60%, rgba(180,255,200,0.15) 0%, transparent 60%);
+    pointer-events: none;
+    opacity: 0.9;
+    animation: sunnyLight 28s linear infinite;
+  }
+
+  @keyframes sunnyLight {
+    0% { transform: translate(0, 0) rotate(0deg); }
+    100% { transform: translate(12px, -15px) rotate(2deg); }
+  }
+
+  body.sunny-mode::after {
+    content: '🍃 🌿 🍂 🌱';
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    font-size: 32px;
+    opacity: 0.06;
+    pointer-events: none;
+    animation: floatingLeaves 45s linear infinite;
+    white-space: pre;
+    overflow: hidden;
+  }
+
+  @keyframes floatingLeaves {
+    0% { transform: translateY(120vh) rotate(0deg); }
+    100% { transform: translateY(-120vh) rotate(380deg); }
   }
 
   #main-view { display: flex; height: 100vh; width: 100%; }
 
-  /* GLASSMORPHISM (frosted glass like the DANY example) */
-  #panel-left,
-  #panel-mid,
-  #panel-right,
-  .compose-bar,
-  .gallery-header,
-  .gallery-item {
+  /* Glassmorphism */
+  #panel-left, #panel-mid, #panel-right, .compose-bar, .gallery-header, .gallery-item {
     background: var(--glass-bg);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
@@ -61,31 +98,15 @@
   #panel-mid { border-right: none; }
   #panel-right { border-left: none; }
 
-  /* LEFT PANEL */
-  #panel-left {
-    width: var(--panel-left);
-    min-width: var(--panel-left);
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    padding: 28px 20px;
-    overflow-y: auto;
-    z-index: 10;
-  }
+  #panel-left { width: var(--panel-left); min-width: var(--panel-left); height: 100vh; display: flex; flex-direction: column; padding: 28px 20px; overflow-y: auto; z-index: 10; }
   #panel-left::-webkit-scrollbar { width: 3px; }
   #panel-left::-webkit-scrollbar-thumb { background: var(--border); }
 
   .site-name { font-size: 22px; font-weight: 500; letter-spacing: -0.02em; margin-bottom: 14px; line-height: 1; }
   .site-tagline { font-size: 11px; color: var(--muted); line-height: 1.6; margin-bottom: 28px; font-weight: 300; }
 
-  .left-section-label {
-    font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase;
-    color: var(--muted); margin-bottom: 8px; margin-top: 20px;
-  }
-  .left-nav-link {
-    font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase;
-    color: var(--muted); cursor: pointer; transition: color 0.15s; margin-bottom: 8px; margin-top: 20px; display: block;
-  }
+  .left-section-label { font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; margin-top: 20px; }
+  .left-nav-link { font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); cursor: pointer; transition: color 0.15s; margin-bottom: 8px; margin-top: 20px; display: block; }
   .left-nav-link:hover { color: var(--ink); }
 
   .archive-list { list-style: none; margin-bottom: 10px; }
@@ -99,110 +120,52 @@
   .social-link { font-size: 11px; color: var(--muted); text-decoration: none; transition: color 0.15s; display: block; padding: 2px 0; }
   .social-link:hover { color: var(--ink); }
 
-  /* MIDDLE PANEL */
-  #panel-mid {
-    flex: 1; height: 100vh; overflow-y: scroll;
-    padding: 28px 28px 80px; scroll-behavior: smooth;
-  }
+  #panel-mid { flex: 1; height: 100vh; overflow-y: scroll; padding: 28px 28px 80px; scroll-behavior: smooth; }
   #panel-mid::-webkit-scrollbar { width: 4px; }
   #panel-mid::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 
-  .post {
-    margin-bottom: 48px; padding-bottom: 40px; border-bottom: 1px solid var(--border);
-    opacity: 0; transform: translateY(10px); animation: fadeUp 0.4s forwards;
-  }
+  .post { margin-bottom: 48px; padding-bottom: 40px; border-bottom: 1px solid var(--border); opacity: 0; transform: translateY(10px); animation: fadeUp 0.4s forwards; }
   .post:last-child { border-bottom: none; }
   @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
 
   .post-meta { font-size: 10px; color: var(--muted); margin-bottom: 14px; letter-spacing: 0.04em; }
   .post-text { font-size: 13px; line-height: 1.85; white-space: pre-wrap; font-weight: 300; }
 
-  .post-image-thumb {
-    margin-top: 16px; width: 100%; max-width: 320px; aspect-ratio: 4/3;
-    object-fit: cover; cursor: pointer; border: 1px solid var(--border); transition: opacity 0.2s; display: block;
-  }
+  .post-image-thumb { margin-top: 16px; width: 100%; max-width: 320px; aspect-ratio: 4/3; object-fit: cover; cursor: pointer; border: 1px solid var(--border); transition: opacity 0.2s; display: block; }
   .post-image-thumb:hover { opacity: 0.8; }
 
-  .compose-bar {
-    position: fixed; bottom: 0; left: var(--panel-left); right: var(--panel-right);
-    padding: 12px 28px; display: flex; gap: 10px; align-items: flex-start; z-index: 100;
-  }
-  .compose-area {
-    flex: 1; font-family: var(--mono); font-size: 12px; background: transparent;
-    border: none; outline: none; resize: none; color: var(--ink); min-height: 36px; max-height: 120px; line-height: 1.6;
-  }
+  .compose-bar { position: fixed; bottom: 0; left: var(--panel-left); right: var(--panel-right); padding: 12px 28px; display: flex; gap: 10px; align-items: flex-start; z-index: 100; }
+  .compose-area { flex: 1; font-family: var(--mono); font-size: 12px; background: transparent; border: none; outline: none; resize: none; color: var(--ink); min-height: 36px; max-height: 120px; line-height: 1.6; }
   .compose-area::placeholder { color: var(--muted); }
   .compose-actions { display: flex; flex-direction: column; gap: 6px; align-items: flex-end; }
-  .compose-btn {
-    font-family: var(--mono); font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase;
-    padding: 5px 12px; background: var(--ink); color: var(--bg); border: none; cursor: pointer; transition: background 0.15s;
-  }
+  .compose-btn { font-family: var(--mono); font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; padding: 5px 12px; background: var(--ink); color: var(--bg); border: none; cursor: pointer; transition: background 0.15s; }
   .compose-btn:hover { background: var(--accent); }
-  .compose-img-btn {
-    font-family: var(--mono); font-size: 10px; letter-spacing: 0.06em;
-    color: var(--muted); background: transparent; border: 1px solid var(--border);
-    padding: 4px 10px; cursor: pointer; transition: border-color 0.15s, color 0.15s;
-  }
+  .compose-img-btn { font-family: var(--mono); font-size: 10px; letter-spacing: 0.06em; color: var(--muted); background: transparent; border: 1px solid var(--border); padding: 4px 10px; cursor: pointer; transition: border-color 0.15s, color 0.15s; }
   .compose-img-btn:hover { border-color: var(--ink); color: var(--ink); }
   #file-input { display: none; }
   .compose-preview { margin-top: 8px; display: flex; gap: 8px; flex-wrap: wrap; }
   .compose-preview-thumb { width: 52px; height: 52px; object-fit: cover; border: 1px solid var(--border); cursor: pointer; }
 
-  /* RIGHT PANEL */
   #panel-right { width: var(--panel-right); min-width: var(--panel-right); height: 100vh; overflow-y: scroll; }
 
-  #panel-right::-webkit-scrollbar { width: 4px; }
-  #panel-right::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
-
-  .gallery-header {
-    padding: 28px 20px 10px; display: flex; justify-content: space-between; align-items: baseline;
-    position: sticky; top: 0; z-index: 5;
-  }
-  .gallery-header-label { 
-    font-size: 9px; letter-spacing: 0.08em; color: var(--muted); cursor: pointer; 
-    background: none; border: none; font-family: var(--mono); text-transform: uppercase; 
-    transition: color 0.15s; display: inline; 
-  }
+  .gallery-header { padding: 28px 20px 10px; display: flex; justify-content: space-between; align-items: baseline; position: sticky; top: 0; z-index: 5; }
+  .gallery-header-label { font-size: 9px; letter-spacing: 0.08em; color: var(--muted); cursor: pointer; background: none; border: none; font-family: var(--mono); text-transform: uppercase; transition: color 0.15s; }
   .gallery-header-label:hover { color: var(--ink); }
-  .gallery-sort-toggle,
-  .theme-toggle {
-    font-size: 9px; letter-spacing: 0.08em; color: var(--muted); cursor: pointer;
-    background: none; border: none; font-family: var(--mono); text-transform: uppercase; 
-    transition: color 0.15s;
-  }
-  .gallery-sort-toggle:hover,
-  .theme-toggle:hover { color: var(--ink); }
+  .gallery-sort-toggle, .theme-toggle { font-size: 9px; letter-spacing: 0.08em; color: var(--muted); cursor: pointer; background: none; border: none; font-family: var(--mono); text-transform: uppercase; transition: color 0.15s; }
+  .gallery-sort-toggle:hover, .theme-toggle:hover { color: var(--ink); }
 
   .gallery-grid { display: flex; flex-direction: column; }
-  .gallery-item { 
-    border-bottom: 1px solid var(--border); 
-    cursor: pointer; 
-    position: relative; 
-    overflow: hidden; 
-  }
-  .gallery-item.pinned::before {
-    content: '↑ PINNED'; position: absolute; top: 8px; left: 8px;
-    font-size: 8px; letter-spacing: 0.1em; background: var(--ink); color: var(--bg); padding: 2px 6px; z-index: 2;
-  }
+  .gallery-item { border-bottom: 1px solid var(--border); cursor: pointer; position: relative; overflow: hidden; }
+  .gallery-item.pinned::before { content: '↑ PINNED'; position: absolute; top: 8px; left: 8px; font-size: 8px; letter-spacing: 0.1em; background: var(--ink); color: var(--bg); padding: 2px 6px; z-index: 2; }
   .gallery-img { width: 100%; display: block; aspect-ratio: 4/3; object-fit: cover; transition: opacity 0.2s; }
   .gallery-item:hover .gallery-img { opacity: 0.85; }
 
   .gallery-item-meta { 
-    padding: 8px 14px 10px; 
-    display: flex; 
-    justify-content: space-between; 
-    align-items: baseline; 
-    opacity: 0; 
-    transition: opacity 0.25s ease;
-    pointer-events: none;
+    padding: 8px 14px 10px; display: flex; justify-content: space-between; align-items: baseline; 
+    opacity: 0; transition: opacity 0.25s ease; pointer-events: none;
   }
-  .gallery-item.text-visible .gallery-item-meta {
-    opacity: 1;
-    pointer-events: auto;
-  }
-  .gallery-item.text-visible {
-    background: rgba(255,255,255,0.06);
-  }
+  .gallery-item.text-visible .gallery-item-meta { opacity: 1; pointer-events: auto; }
+  .gallery-item.text-visible { background: rgba(255,255,255,0.06); }
 
   .gallery-item-caption { font-size: 10px; color: var(--muted); max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .gallery-item-date { font-size: 9px; color: var(--border); flex-shrink: 0; }
@@ -215,68 +178,32 @@
   .pin-btn:hover, .pin-btn.pinned-active { background: var(--ink); color: var(--bg); opacity: 1; }
   .empty-gallery { padding: 40px 20px; font-size: 11px; color: var(--muted); text-align: center; }
 
-  /* noise */
   body::after {
     content: ''; position: fixed; inset: 0; pointer-events: none; opacity: 0.025;
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
     background-size: 256px; z-index: 9999;
   }
 
-  /* GALLERY PAGE (also gets glass in night mode) */
-  #gallery-page {
-    display: none; height: 100vh; width: 100%;
-    background: var(--bg); flex-direction: row;
-  }
+  #gallery-page { display: none; height: 100vh; width: 100%; background: var(--bg); flex-direction: row; }
   #gallery-page.active { display: flex; }
 
-  #gallery-topbar {
-    position: fixed; top: 0; left: 0; right: 0; height: 48px;
-    border-bottom: 1px solid var(--border); background: var(--glass-bg);
-    backdrop-filter: blur(20px);
-    display: flex; align-items: center; padding: 0 24px; gap: 20px; z-index: 200;
-  }
-
-  .back-btn {
-    font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
-    background: none; border: none; color: var(--muted); cursor: pointer; transition: color 0.15s; padding: 0;
-  }
+  #gallery-topbar { position: fixed; top: 0; left: 0; right: 0; height: 48px; border-bottom: 1px solid var(--border); background: var(--glass-bg); backdrop-filter: blur(20px); display: flex; align-items: center; padding: 0 24px; gap: 20px; z-index: 200; }
+  .back-btn { font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; background: none; border: none; color: var(--muted); cursor: pointer; transition: color 0.15s; padding: 0; }
   .back-btn:hover { color: var(--ink); }
-
   .gallery-page-title { font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink); }
   .gallery-page-count { font-size: 10px; color: var(--muted); margin-left: auto; }
 
-  #gallery-viewer {
-    flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
-    padding: 70px 64px 24px; position: relative; min-width: 0;
-  }
-
-  #gallery-main-img {
-    max-width: 100%; max-height: calc(100vh - 200px);
-    object-fit: contain; display: block; transition: opacity 0.2s;
-  }
-
-  .gallery-nav-btn {
-    position: absolute; top: 50%; transform: translateY(-50%);
-    background: var(--glass-bg); border: 1px solid var(--glass-border); font-family: var(--mono);
-    font-size: 20px; color: var(--ink); width: 44px; height: 44px; cursor: pointer;
-    display: flex; align-items: center; justify-content: center; transition: background 0.15s, border-color 0.15s; z-index: 10;
-  }
+  #gallery-viewer { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 70px 64px 24px; position: relative; min-width: 0; }
+  #gallery-main-img { max-width: 100%; max-height: calc(100vh - 200px); object-fit: contain; display: block; transition: opacity 0.2s; }
+  .gallery-nav-btn { position: absolute; top: 50%; transform: translateY(-50%); background: var(--glass-bg); border: 1px solid var(--glass-border); font-family: var(--mono); font-size: 20px; color: var(--ink); width: 44px; height: 44px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.15s, border-color 0.15s; z-index: 10; }
   .gallery-nav-btn:hover { background: var(--ink); color: var(--bg); border-color: var(--ink); }
   #gallery-prev { left: 12px; }
   #gallery-next { right: 12px; }
 
-  #gallery-img-caption {
-    margin-top: 16px; font-size: 12px; color: var(--muted);
-    text-align: center; max-width: 520px; line-height: 1.7; font-weight: 300;
-  }
+  #gallery-img-caption { margin-top: 16px; font-size: 12px; color: var(--muted); text-align: center; max-width: 520px; line-height: 1.7; font-weight: 300; }
   #gallery-img-date { margin-top: 6px; font-size: 10px; color: var(--border); text-align: center; }
 
-  #gallery-thumbs {
-    width: 200px; min-width: 200px; height: 100vh; padding-top: 48px;
-    border-left: 1px solid var(--border); overflow-y: auto; background: var(--glass-bg);
-    backdrop-filter: blur(20px);
-    display: flex; flex-direction: column;
-  }
+  #gallery-thumbs { width: 200px; min-width: 200px; height: 100vh; padding-top: 48px; border-left: 1px solid var(--border); overflow-y: auto; background: var(--glass-bg); backdrop-filter: blur(20px); display: flex; flex-direction: column; }
   #gallery-thumbs::-webkit-scrollbar { width: 3px; }
   #gallery-thumbs::-webkit-scrollbar-thumb { background: var(--border); }
 
@@ -286,26 +213,19 @@
   .thumb-item.active::after { content: ''; position: absolute; inset: 0; border: 2px solid var(--ink); pointer-events: none; }
   .thumb-item-label { padding: 5px 8px 6px; font-size: 9px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-  #gallery-empty-page {
-    display: none; align-items: center; justify-content: center;
-    height: 100%; font-size: 12px; color: var(--muted);
-  }
+  #gallery-empty-page { display: none; align-items: center; justify-content: center; height: 100%; font-size: 12px; color: var(--muted); }
 </style>
 </head>
 <body>
 
 <div id="main-view">
-
   <aside id="panel-left">
     <div class="site-name">ARCHIVE</div>
     <div class="site-tagline">a personal archive of thoughts, images, and fragments.</div>
-
     <div class="left-section-label">Posts</div>
     <div id="archive-index"></div>
-
     <div class="left-section-label" style="margin-top:24px;">View</div>
     <div class="left-nav-link" onclick="openGalleryPage()">Gallery</div>
-
     <div class="left-spacer"></div>
     <div class="left-section-label">Social</div>
     <a class="social-link" href="#">x.com/handle</a>
@@ -334,10 +254,8 @@
         <button class="gallery-sort-toggle" onclick="toggleGallerySort()">
           <span id="sort-label">chronological</span>
         </button>
-        <!-- NIGHT MODE BUTTON -->
-        <button class="theme-toggle" onclick="toggleNightMode()" id="theme-btn">
-          <span id="theme-icon">☀️</span>
-        </button>
+        <button class="theme-toggle" onclick="toggleNightMode()" id="night-btn"><span id="night-icon">🌙</span></button>
+        <button class="theme-toggle" onclick="toggleSunnyMode()" id="sunny-btn"><span id="sunny-icon">☀️</span></button>
       </div>
     </div>
     <div class="gallery-grid" id="gallery-grid"></div>
@@ -351,7 +269,6 @@
     <span class="gallery-page-title">Gallery</span>
     <span class="gallery-page-count" id="gallery-page-count"></span>
   </div>
-
   <div id="gallery-viewer">
     <div id="gallery-empty-page">No images uploaded yet.</div>
     <img id="gallery-main-img" src="" alt="" style="display:none;">
@@ -360,37 +277,41 @@
     <div id="gallery-img-caption"></div>
     <div id="gallery-img-date"></div>
   </div>
-
   <div id="gallery-thumbs"></div>
 </div>
 
 <script>
-// === PERSISTENCE + THEME ===
-function saveData() {
-  localStorage.setItem('archive_posts', JSON.stringify(posts));
-  localStorage.setItem('archive_gallery', JSON.stringify(galleryImages));
-  localStorage.setItem('archive_pinned', JSON.stringify(Array.from(galleryPinned)));
-  localStorage.setItem('archive_theme', document.documentElement.classList.contains('night-mode') ? 'night' : 'light');
-}
-
-function loadData() {
-  const savedPosts = localStorage.getItem('archive_posts');
-  const savedGallery = localStorage.getItem('archive_gallery');
-  const savedPinned = localStorage.getItem('archive_pinned');
-  const savedTheme = localStorage.getItem('archive_theme');
-
-  if (savedPosts) posts = JSON.parse(savedPosts);
-  if (savedGallery) galleryImages = JSON.parse(savedGallery);
-  if (savedPinned) galleryPinned = new Set(JSON.parse(savedPinned));
-  if (savedTheme === 'night') document.documentElement.classList.add('night-mode');
-}
-
 let posts = [];
 let galleryImages = [];
 let galleryPinned = new Set();
 let showPinnedFirst = false;
 let pendingImageData = [];
 let currentGalleryIndex = 0;
+
+function saveData() {
+  localStorage.setItem('archive_posts', JSON.stringify(posts));
+  localStorage.setItem('archive_gallery', JSON.stringify(galleryImages));
+  localStorage.setItem('archive_pinned', JSON.stringify(Array.from(galleryPinned)));
+  localStorage.setItem('archive_night', document.documentElement.classList.contains('night-mode') ? '1' : '0');
+  localStorage.setItem('archive_sunny', document.body.classList.contains('sunny-mode') ? '1' : '0');
+}
+
+function loadData() {
+  const savedPosts = localStorage.getItem('archive_posts');
+  const savedGallery = localStorage.getItem('archive_gallery');
+  const savedPinned = localStorage.getItem('archive_pinned');
+  if (savedPosts) posts = JSON.parse(savedPosts);
+  if (savedGallery) galleryImages = JSON.parse(savedGallery);
+  if (savedPinned) galleryPinned = new Set(JSON.parse(savedPinned));
+
+  if (localStorage.getItem('archive_night') === '1') {
+    document.documentElement.classList.add('night-mode');
+    document.getElementById('night-icon').textContent = '☀️';
+  }
+  if (localStorage.getItem('archive_sunny') === '1') {
+    document.body.classList.add('sunny-mode');
+  }
+}
 
 function seedData() {
   if (posts.length > 0) return;
@@ -427,12 +348,22 @@ function getSortedImages() {
 }
 
 function toggleNightMode() {
-  const isNight = document.documentElement.classList.toggle('night-mode');
-  document.getElementById('theme-icon').textContent = isNight ? '🌙' : '☀️';
+  const night = document.documentElement.classList.toggle('night-mode');
+  document.getElementById('night-icon').textContent = night ? '☀️' : '🌙';
   saveData();
 }
 
-// ── POSTS & GALLERY RENDER (same as before) ──
+function toggleSunnyMode() {
+  document.body.classList.toggle('sunny-mode');
+  saveData();
+}
+
+function closeGalleryPage() {
+  document.getElementById('gallery-page').classList.remove('active');
+  document.getElementById('main-view').style.display = 'flex';
+  document.querySelectorAll('.gallery-item').forEach(item => item.classList.remove('text-visible'));
+}
+
 function renderPosts() {
   const c = document.getElementById('posts-container');
   c.innerHTML = '';
@@ -537,7 +468,6 @@ function togglePin(id) {
   galleryPinned.has(id) ? galleryPinned.delete(id) : galleryPinned.add(id);
   renderGallery();
   saveData();
-  if (document.getElementById('gallery-page').classList.contains('active')) renderGalleryPage();
 }
 
 function openGalleryPage(startIndex) {
@@ -545,11 +475,6 @@ function openGalleryPage(startIndex) {
   document.getElementById('main-view').style.display = 'none';
   document.getElementById('gallery-page').classList.add('active');
   renderGalleryPage();
-}
-
-function closeGalleryPage() {
-  document.getElementById('gallery-page').classList.remove('active');
-  document.getElementById('main-view').style.display = 'flex';
 }
 
 function renderGalleryPage() {
@@ -623,10 +548,7 @@ document.addEventListener('keydown', e => {
 function handleImageSelect(event) {
   Array.from(event.target.files).forEach(file => {
     const reader = new FileReader();
-    reader.onload = e => { 
-      pendingImageData.push({dataUrl: e.target.result, caption:''}); 
-      renderComposePreviews(); 
-    };
+    reader.onload = e => { pendingImageData.push({dataUrl: e.target.result, caption:''}); renderComposePreviews(); };
     reader.readAsDataURL(file);
   });
   event.target.value = '';
@@ -670,7 +592,7 @@ function formatDate(ts) {
 function formatDateShort(ts) { return new Date(ts).toLocaleDateString('en',{day:'2-digit',month:'short'}); }
 function escapeHtml(str) { return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
-// ── INIT ──
+// INIT
 loadData();
 seedData();
 renderPosts();
