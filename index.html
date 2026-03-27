@@ -40,7 +40,7 @@
     position: relative;
   }
 
-  /* Calming backgrounds - more visible */
+  /* Calming backgrounds */
   body.calm-leaves::before, body.calm-clouds::before, body.calm-rain::before {
     content: ''; position: fixed; inset: 0; z-index: -1; pointer-events: none;
   }
@@ -60,7 +60,6 @@
 
   #main-view { display: flex; height: 100vh; width: 100%; }
 
-  /* Glass */
   #panel-left, #panel-mid, #panel-right, .compose-bar, .gallery-header, .gallery-item {
     background: var(--glass-bg);
     backdrop-filter: blur(20px);
@@ -110,24 +109,39 @@
   }
   .back-btn:hover { color: var(--ink); }
 
-  /* Gallery & Posts styles (kept clean) */
+  /* Gallery */
   .gallery-header { padding: 28px 20px 10px; display: flex; justify-content: space-between; align-items: baseline; position: sticky; top: 0; z-index: 5; }
-  .gallery-sort-toggle, .theme-toggle { font-size: 9px; letter-spacing: 0.08em; color: var(--muted); cursor: pointer; background: none; border: none; text-transform: uppercase; }
-  .gallery-sort-toggle:hover, .theme-toggle:hover { color: var(--ink); }
+  .gallery-header-label, .gallery-sort-toggle, .theme-toggle { font-size: 9px; letter-spacing: 0.08em; color: var(--muted); cursor: pointer; background: none; border: none; text-transform: uppercase; }
+  .gallery-header-label:hover, .gallery-sort-toggle:hover, .theme-toggle:hover { color: var(--ink); }
 
+  .gallery-grid { display: flex; flex-direction: column; }
   .gallery-item { border-bottom: 1px solid var(--border); position: relative; overflow: hidden; cursor: pointer; }
-  .gallery-img { width: 100%; aspect-ratio: 4/3; object-fit: cover; }
-  .gallery-item-meta { padding: 8px 14px 10px; display: flex; justify-content: space-between; opacity: 0; transition: opacity 0.25s; pointer-events: none; }
+  .gallery-img { width: 100%; aspect-ratio: 4/3; object-fit: cover; transition: opacity 0.2s; }
+  .gallery-item:hover .gallery-img { opacity: 0.85; }
+  .gallery-item-meta { padding: 8px 14px 10px; display: flex; justify-content: space-between; align-items: baseline; opacity: 0; transition: opacity 0.25s ease; pointer-events: none; }
   .gallery-item.text-visible .gallery-item-meta { opacity: 1; pointer-events: auto; }
   .gallery-item-caption { font-size: 10px; color: var(--muted); max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .gallery-item-date { font-size: 9px; color: var(--border); flex-shrink: 0; }
+
+  .pin-btn { position: absolute; top: 8px; right: 8px; background: var(--glass-bg); border: 1px solid var(--glass-border); font-family: var(--mono); font-size: 8px; letter-spacing: 0.08em; text-transform: uppercase; padding: 3px 7px; cursor: pointer; opacity: 0; transition: opacity 0.15s; z-index: 3; }
+  .gallery-item:hover .pin-btn { opacity: 1; }
+  .pin-btn:hover, .pin-btn.pinned-active { background: var(--ink); color: var(--bg); opacity: 1; }
 
   .post { margin-bottom: 48px; padding-bottom: 40px; border-bottom: 1px solid var(--border); }
   .post-meta { font-size: 10px; color: var(--muted); margin-bottom: 14px; }
-  .post-text { font-size: 13px; line-height: 1.85; white-space: pre-wrap; }
+  .post-text { font-size: 13px; line-height: 1.85; white-space: pre-wrap; font-weight: 300; }
 
   .compose-bar { position: fixed; bottom: 0; left: var(--panel-left); right: var(--panel-right); background: var(--glass-bg); backdrop-filter: blur(20px); border-top: 1px solid var(--glass-border); padding: 12px 28px; display: flex; gap: 10px; z-index: 200; }
-  .compose-area { flex: 1; font-family: var(--mono); font-size: 12px; background: transparent; border: none; outline: none; resize: none; color: var(--ink); min-height: 36px; }
+  .compose-area { flex: 1; font-family: var(--mono); font-size: 12px; background: transparent; border: none; outline: none; resize: none; color: var(--ink); min-height: 36px; max-height: 120px; line-height: 1.6; }
   .compose-area::placeholder { color: var(--muted); }
+  .compose-actions { display: flex; flex-direction: column; gap: 6px; align-items: flex-end; }
+  .compose-btn { font-family: var(--mono); font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; padding: 5px 12px; background: var(--ink); color: var(--bg); border: none; cursor: pointer; transition: background 0.15s; }
+  .compose-btn:hover { background: var(--accent); }
+  .compose-img-btn { font-family: var(--mono); font-size: 10px; letter-spacing: 0.06em; color: var(--muted); background: transparent; border: 1px solid var(--border); padding: 4px 10px; cursor: pointer; transition: border-color 0.15s, color 0.15s; }
+  .compose-img-btn:hover { border-color: var(--ink); color: var(--ink); }
+  #file-input { display: none; }
+  .compose-preview { margin-top: 8px; display: flex; gap: 8px; flex-wrap: wrap; }
+  .compose-preview-thumb { width: 52px; height: 52px; object-fit: cover; border: 1px solid var(--border); cursor: pointer; }
 </style>
 </head>
 <body>
@@ -153,6 +167,17 @@
 
   <main id="panel-mid">
     <div id="posts-container"></div>
+    <div class="compose-bar">
+      <div style="flex:1;display:flex;flex-direction:column;gap:6px;">
+        <textarea class="compose-area" id="compose-text" rows="2" placeholder="write something..."></textarea>
+        <div class="compose-preview" id="compose-preview"></div>
+      </div>
+      <div class="compose-actions">
+        <button class="compose-btn" onclick="publishPost()">POST</button>
+        <button class="compose-img-btn" onclick="document.getElementById('file-input').click()">+ IMG</button>
+      </div>
+    </div>
+    <input type="file" id="file-input" accept="image/*" multiple onchange="handleImageSelect(event)">
   </main>
 
   <aside id="panel-right">
@@ -178,16 +203,13 @@
   </div>
 </div>
 
-<!-- Gallery Full View -->
-<div id="gallery-page" style="display:none;">
-  <!-- ... your gallery code here if needed, but for now keeping minimal to avoid breaking -->
-</div>
-
 <script>
 let posts = [];
 let galleryImages = [];
 let galleryPinned = new Set();
 let showPinnedFirst = false;
+let pendingImageData = [];
+let currentGalleryIndex = 0;
 let calmMode = 0;
 
 function saveData() {
@@ -244,27 +266,225 @@ function hideAboutPage() {
   document.getElementById('about-page').classList.remove('active');
 }
 
-// Simple seed + render for testing
 function seedData() {
   if (posts.length > 0) return;
-  const now = Date.now();
-  posts = [{ id: 1, text: "Welcome to the archive.", timestamp: now, images: [] }];
-  galleryImages = [];
+  const now = Date.now(), day = 86400000;
+  posts = [
+    { id: 1, text: `10yo me would think i am cool.\nthat's all i care about.`, timestamp: now - day*3, images: [] },
+    { id: 2, text: `you're not burned out.\nyou're addicted.\n\nnot to work.\nto stimulation.\n\n...`, timestamp: now - day*2, images: [] },
+    { id: 3, text: `logo and icon set for Die Carz`, timestamp: now - day*1, images: [] }
+  ];
+  const defs = [
+    { sym: 'X', bg: '#2d2d2d', cap: 'logo and icon set — primary mark.' },
+    { sym: '◎', bg: '#4a3728', cap: 'icon set — secondary marks.' },
+    { sym: '▲', bg: '#1a3a2a', cap: 'wordmark variations.' }
+  ];
+  galleryImages = defs.map((d, i) => ({
+    id: 'g'+i, dataUrl: makeSVG(d.sym, d.bg), caption: d.cap,
+    timestamp: now - day*(1 - i*0.2), postId: 3
+  }));
+}
+
+function makeSVG(sym, bg) {
+  const s = `<svg xmlns='http://www.w3.org/2000/svg' width='400' height='300'><rect width='400' height='300' fill='${bg}'/><text x='200' y='170' text-anchor='middle' font-size='100' fill='rgba(255,255,255,0.15)' font-family='monospace'>${sym}</text></svg>`;
+  return 'data:image/svg+xml;base64,' + btoa(s);
+}
+
+function getSortedImages() {
+  let imgs = [...galleryImages];
+  if (showPinnedFirst) {
+    imgs.sort((a,b) => (galleryPinned.has(a.id)?0:1) - (galleryPinned.has(b.id)?0:1) || b.timestamp - a.timestamp);
+  } else {
+    imgs.sort((a,b) => b.timestamp - a.timestamp);
+  }
+  return imgs;
 }
 
 function renderPosts() {
-  const container = document.getElementById('posts-container');
-  container.innerHTML = '<div style="padding:40px;color:var(--muted);text-align:center;">Your posts will appear here.</div>';
+  const c = document.getElementById('posts-container');
+  c.innerHTML = '';
+  const sorted = [...posts].sort((a,b) => a.timestamp - b.timestamp);
+  sorted.forEach((post, i) => {
+    const div = document.createElement('div');
+    div.className = 'post';
+    div.id = 'post-'+post.id;
+    div.style.animationDelay = (i*0.05)+'s';
+    let imgs = '';
+    post.images?.forEach(img => {
+      if (img.dataUrl) imgs += `<img class="post-image-thumb" src="${img.dataUrl}" onclick="openGalleryPage()" alt="">`;
+    });
+    div.innerHTML = `<div class="post-meta">${formatDate(post.timestamp)}</div><div class="post-text">${escapeHtml(post.text)}</div>${imgs}`;
+    c.appendChild(div);
+  });
+  renderArchiveIndex(sorted);
+}
+
+function renderArchiveIndex(sorted) {
+  const c = document.getElementById('archive-index');
+  c.innerHTML = '';
+  const groups = {};
+  sorted.forEach(p => {
+    const k = new Date(p.timestamp).toLocaleString('en', {month:'long',year:'numeric'});
+    if (!groups[k]) groups[k] = [];
+    groups[k].push(p);
+  });
+  Object.entries(groups).reverse().forEach(([month, ps]) => {
+    const g = document.createElement('div');
+    g.className = 'archive-date-group';
+    const m = document.createElement('div');
+    m.className = 'archive-month';
+    m.textContent = month;
+    g.appendChild(m);
+    const ul = document.createElement('ul');
+    ul.className = 'archive-list';
+    ps.slice().reverse().forEach(post => {
+      const li = document.createElement('li');
+      const prev = post.text.split('\n')[0].slice(0,26);
+      li.textContent = prev + (post.text.length>26?'…':'');
+      li.onclick = () => document.getElementById('post-'+post.id)?.scrollIntoView({behavior:'smooth',block:'start'});
+      ul.appendChild(li);
+    });
+    g.appendChild(ul);
+    c.appendChild(g);
+  });
 }
 
 function renderGallery() {
-  // minimal for now
+  const grid = document.getElementById('gallery-grid');
+  const empty = document.getElementById('gallery-empty');
+  grid.innerHTML = '';
+  const images = getSortedImages();
+  if (images.length === 0) { empty.style.display='block'; return; }
+  empty.style.display = 'none';
+
+  images.forEach((img, i) => {
+    const isPinned = galleryPinned.has(img.id);
+    const item = document.createElement('div');
+    item.className = 'gallery-item' + (isPinned?' pinned':'');
+
+    const gi = document.createElement('img');
+    gi.className = 'gallery-img';
+    gi.src = img.dataUrl;
+    gi.loading = 'lazy';
+
+    const pb = document.createElement('button');
+    pb.className = 'pin-btn' + (isPinned?' pinned-active':'');
+    pb.textContent = isPinned ? '↓ Unpin' : '↑ Pin';
+
+    const meta = document.createElement('div');
+    meta.className = 'gallery-item-meta';
+    meta.innerHTML = `<span class="gallery-item-caption">${escapeHtml(img.caption||'')}</span><span class="gallery-item-date">${formatDateShort(img.timestamp)}</span>`;
+
+    item.appendChild(gi);
+    item.appendChild(pb);
+    item.appendChild(meta);
+
+    gi.addEventListener('click', (e) => {
+      e.stopPropagation();
+      item.classList.toggle('text-visible');
+      openGalleryPage(i);
+    });
+
+    pb.addEventListener('click', e => { 
+      e.stopPropagation(); 
+      togglePin(img.id); 
+    });
+
+    grid.appendChild(item);
+  });
 }
 
-seedData();
+function toggleGallerySort() {
+  showPinnedFirst = !showPinnedFirst;
+  document.getElementById('sort-label').textContent = showPinnedFirst ? 'PINNED FIRST' : 'CHRONOLOGICAL';
+  renderGallery();
+}
+
+function togglePin(id) {
+  galleryPinned.has(id) ? galleryPinned.delete(id) : galleryPinned.add(id);
+  renderGallery();
+  saveData();
+}
+
+function openGalleryPage(startIndex) {
+  currentGalleryIndex = (startIndex !== undefined) ? startIndex : 0;
+  document.getElementById('main-view').style.display = 'none';
+  document.getElementById('gallery-page').style.display = 'flex';
+  renderGalleryPage();
+}
+
+function closeGalleryPage() {
+  document.getElementById('gallery-page').style.display = 'none';
+  document.getElementById('main-view').style.display = 'flex';
+  document.querySelectorAll('.gallery-item').forEach(item => item.classList.remove('text-visible'));
+}
+
+function renderGalleryPage() {
+  // Simple placeholder - you can expand this later
+  const viewer = document.getElementById('gallery-page');
+  // For now just close on click outside or use back button
+}
+
+function handleImageSelect(event) {
+  Array.from(event.target.files).forEach(file => {
+    const reader = new FileReader();
+    reader.onload = e => { 
+      pendingImageData.push({dataUrl: e.target.result, caption:''}); 
+      renderComposePreviews(); 
+    };
+    reader.readAsDataURL(file);
+  });
+  event.target.value = '';
+}
+
+function renderComposePreviews() {
+  const preview = document.getElementById('compose-preview');
+  preview.innerHTML = '';
+  pendingImageData.forEach((img, i) => {
+    const el = document.createElement('img');
+    el.src = img.dataUrl;
+    el.className = 'compose-preview-thumb';
+    el.title = 'click to remove';
+    el.onclick = () => { pendingImageData.splice(i,1); renderComposePreviews(); };
+    preview.appendChild(el);
+  });
+}
+
+function publishPost() {
+  const text = document.getElementById('compose-text').value.trim();
+  if (!text && pendingImageData.length === 0) return;
+  const now = Date.now();
+  const newPost = { id: now, text, timestamp: now, images: pendingImageData.map(img => ({dataUrl: img.dataUrl, caption: img.caption})) };
+  posts.unshift(newPost);
+  pendingImageData.forEach((img, i) => {
+    galleryImages.unshift({ id:'g'+now+i, dataUrl: img.dataUrl, caption: text||'', timestamp: now, postId: now });
+  });
+  pendingImageData = [];
+  document.getElementById('compose-text').value = '';
+  document.getElementById('compose-preview').innerHTML = '';
+  renderPosts();
+  renderGallery();
+  saveData();
+  setTimeout(() => document.getElementById('panel-mid').scrollTo({top:0,behavior:'smooth'}), 50);
+}
+
+function formatDate(ts) {
+  const d = new Date(ts);
+  return d.toLocaleDateString('en',{day:'2-digit',month:'short',year:'numeric'}) + ' · ' + d.toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit',hour12:false});
+}
+function formatDateShort(ts) { return new Date(ts).toLocaleDateString('en',{day:'2-digit',month:'short'}); }
+function escapeHtml(str) { return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+// INIT
 loadData();
+seedData();
 renderPosts();
 renderGallery();
+
+document.getElementById('compose-text').addEventListener('input', function() {
+  this.style.height = 'auto';
+  this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+});
 </script>
 </body>
 </html>
