@@ -567,49 +567,49 @@ function updateLeaf(p) {
     p.x = Math.random() * window.innerWidth;
   }
 }
-// MODE 2: Volumetric clouds — layered radial gradients drifting slowly
+// MODE 2: Hyper-realistic volumetric clouds — multi-layered shading, soft volumetric shadows, bright rim lighting, irregular fluff
 function initClouds() {
   const W = window.innerWidth, H = window.innerHeight;
-  // Large background clouds
-  for (let i = 0; i < 6; i++) {
+  // Large background clouds — more of them, richer depth
+  for (let i = 0; i < 9; i++) {
     calmParticles.push({
       type: 'cloud',
-      x: Math.random() * W * 1.4 - W * 0.2,
-      y: H * 0.05 + Math.random() * H * 0.55,
-      speed: 0.12 + Math.random() * 0.18,
-      opacity: 0.06 + Math.random() * 0.09,
-      scaleX: 1.8 + Math.random() * 2.2,
-      scaleY: 0.55 + Math.random() * 0.5,
-      radius: 110 + Math.random() * 140,
+      x: Math.random() * W * 1.6 - W * 0.3,
+      y: H * 0.02 + Math.random() * H * 0.48,
+      speed: 0.09 + Math.random() * 0.14,
+      opacity: 0.07 + Math.random() * 0.08,
+      scaleX: 1.9 + Math.random() * 2.6,
+      scaleY: 0.52 + Math.random() * 0.48,
+      radius: 125 + Math.random() * 165,
       layer: 0,
-      puffs: genPuffs(5 + Math.floor(Math.random()*4), 110 + Math.random()*140),
+      puffs: genPuffs(7 + Math.floor(Math.random()*5), 125 + Math.random()*165),
     });
   }
-  // Mid clouds
-  for (let i = 0; i < 8; i++) {
+  // Mid-layer clouds — fluffier and more varied
+  for (let i = 0; i < 13; i++) {
     calmParticles.push({
       type: 'cloud',
-      x: Math.random() * W * 1.4 - W * 0.2,
-      y: H * 0.05 + Math.random() * H * 0.5,
-      speed: 0.22 + Math.random() * 0.28,
-      opacity: 0.09 + Math.random() * 0.13,
-      scaleX: 1.1 + Math.random() * 1.4,
-      scaleY: 0.45 + Math.random() * 0.4,
-      radius: 65 + Math.random() * 90,
+      x: Math.random() * W * 1.5 - W * 0.25,
+      y: H * 0.08 + Math.random() * H * 0.52,
+      speed: 0.19 + Math.random() * 0.26,
+      opacity: 0.11 + Math.random() * 0.13,
+      scaleX: 1.15 + Math.random() * 1.55,
+      scaleY: 0.48 + Math.random() * 0.38,
+      radius: 72 + Math.random() * 105,
       layer: 1,
-      puffs: genPuffs(4 + Math.floor(Math.random()*3), 65 + Math.random()*90),
+      puffs: genPuffs(5 + Math.floor(Math.random()*4), 72 + Math.random()*105),
     });
   }
-  // Wispy foreground streaks
-  for (let i = 0; i < 10; i++) {
+  // Wispy foreground streaks — softer, more ethereal
+  for (let i = 0; i < 16; i++) {
     calmParticles.push({
       type: 'wisp',
       x: Math.random() * W,
-      y: H * 0.02 + Math.random() * H * 0.4,
-      speed: 0.35 + Math.random() * 0.45,
-      opacity: 0.04 + Math.random() * 0.07,
-      width: 80 + Math.random() * 220,
-      height: 12 + Math.random() * 28,
+      y: H * 0.01 + Math.random() * H * 0.35,
+      speed: 0.32 + Math.random() * 0.48,
+      opacity: 0.035 + Math.random() * 0.065,
+      width: 95 + Math.random() * 260,
+      height: 9 + Math.random() * 24,
       layer: 2,
     });
   }
@@ -618,12 +618,12 @@ function initClouds() {
 function genPuffs(count, baseR) {
   const puffs = [];
   for (let i = 0; i < count; i++) {
-    const angle = (i / count) * Math.PI * 2;
-    const dist = baseR * (0.2 + Math.random() * 0.45);
+    const angle = (i / count) * Math.PI * 2 + (Math.random() - 0.5) * 0.6; // slight randomness in placement
+    const dist = baseR * (0.22 + Math.random() * 0.52);
     puffs.push({
       ox: Math.cos(angle) * dist,
-      oy: Math.sin(angle) * dist * 0.35,
-      r: baseR * (0.38 + Math.random() * 0.45),
+      oy: Math.sin(angle) * dist * 0.38,
+      r: baseR * (0.36 + Math.random() * 0.52),
     });
   }
   return puffs;
@@ -634,13 +634,14 @@ function drawCloud(ctx, p) {
   if (p.type === 'wisp') {
     ctx.globalAlpha = p.opacity;
     const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.width * 0.5);
-    g.addColorStop(0,   'rgba(255,255,255,0.9)');
-    g.addColorStop(0.4, 'rgba(240,245,255,0.4)');
-    g.addColorStop(1,   'rgba(220,235,255,0)');
+    g.addColorStop(0,   'rgba(255,255,255,0.95)');
+    g.addColorStop(0.35, 'rgba(245,250,255,0.55)');
+    g.addColorStop(0.75, 'rgba(225,238,255,0.12)');
+    g.addColorStop(1,   'rgba(210,230,255,0)');
     ctx.fillStyle = g;
-    ctx.scale(1, p.height / (p.width * 0.5));
+    ctx.scale(1, p.height / (p.width * 0.48));
     ctx.beginPath();
-    ctx.arc(p.x, p.y * (p.width * 0.5) / p.height, p.width * 0.5, 0, Math.PI * 2);
+    ctx.arc(p.x, p.y * (p.width * 0.48) / p.height, p.width * 0.5, 0, Math.PI * 2);
     ctx.fill();
     ctx.restore();
     return;
@@ -649,29 +650,67 @@ function drawCloud(ctx, p) {
   ctx.translate(p.x, p.y);
   ctx.scale(p.scaleX, p.scaleY);
 
-  // Draw each puff as a soft radial gradient blob
   const allPuffs = [{ ox: 0, oy: 0, r: p.radius }, ...p.puffs];
+
+  // 1. Soft volumetric shadow layer (underneath the cloud body)
+  ctx.shadowColor = 'rgba(80,95,130,0.28)';
+  ctx.shadowBlur = 22;
   allPuffs.forEach(puff => {
-    ctx.globalAlpha = p.opacity * (puff.r / p.radius) * 1.1;
-    const g = ctx.createRadialGradient(puff.ox, puff.oy, 0, puff.ox, puff.oy, puff.r);
+    ctx.globalAlpha = p.opacity * 0.65 * (puff.r / p.radius);
+    ctx.fillStyle = 'rgba(200,215,245,0.35)';
+    ctx.beginPath();
+    ctx.arc(puff.ox + 9, puff.oy + 14, puff.r * 1.08, 0, Math.PI * 2);
+    ctx.fill();
+  });
+  ctx.shadowBlur = 0;
+
+  // 2. Main cloud body — rich multi-stop volumetric gradient with top-left lighting
+  allPuffs.forEach(puff => {
+    ctx.globalAlpha = p.opacity * (puff.r / p.radius) * 1.35;
+    const g = ctx.createRadialGradient(
+      puff.ox - puff.r * 0.38, puff.oy - puff.r * 0.45, puff.r * 0.2,  // bright highlight source
+      puff.ox, puff.oy, puff.r * 1.12
+    );
     g.addColorStop(0,    'rgba(255,255,255,1)');
-    g.addColorStop(0.35, 'rgba(245,248,255,0.7)');
-    g.addColorStop(0.7,  'rgba(230,238,255,0.25)');
-    g.addColorStop(1,    'rgba(210,225,255,0)');
+    g.addColorStop(0.22, 'rgba(252,254,255,0.98)');
+    g.addColorStop(0.48, 'rgba(240,247,255,0.88)');
+    g.addColorStop(0.72, 'rgba(218,233,255,0.62)');
+    g.addColorStop(0.92, 'rgba(195,215,245,0.22)');
+    g.addColorStop(1,    'rgba(180,205,240,0)');
     ctx.fillStyle = g;
     ctx.beginPath();
     ctx.arc(puff.ox, puff.oy, puff.r, 0, Math.PI * 2);
     ctx.fill();
   });
 
+  // 3. Bright rim lighting / highlight on upper edges (hyper-realistic sunlit fluff)
+  ctx.shadowColor = 'rgba(255,255,255,0.75)';
+  ctx.shadowBlur = 11;
+  allPuffs.forEach(puff => {
+    if (puff.r > p.radius * 0.55) {
+      ctx.globalAlpha = p.opacity * 0.55;
+      const hg = ctx.createRadialGradient(
+        puff.ox - puff.r * 0.42, puff.oy - puff.r * 0.48, puff.r * 0.28,
+        puff.ox, puff.oy, puff.r * 0.92
+      );
+      hg.addColorStop(0, 'rgba(255,255,255,0.95)');
+      hg.addColorStop(0.65, 'rgba(255,255,255,0)');
+      ctx.fillStyle = hg;
+      ctx.beginPath();
+      ctx.arc(puff.ox, puff.oy, puff.r * 0.88, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  });
+  ctx.shadowBlur = 0;
+
   ctx.restore();
 }
 
 function updateCloud(p) {
   p.x += p.speed;
-  if (p.x > window.innerWidth + 400) {
-    p.x = -400;
-    p.y = window.innerHeight * 0.05 + Math.random() * window.innerHeight * 0.5;
+  if (p.x > window.innerWidth + 520) {
+    p.x = -520;
+    p.y = window.innerHeight * 0.02 + Math.random() * window.innerHeight * 0.5;
   }
 }
 
