@@ -200,7 +200,7 @@
       <div style="display:flex;gap:14px;">
         <button class="gallery-sort-toggle" onclick="toggleGallerySort()"><span id="sort-label">Chronological</span></button>
         <button class="theme-toggle" onclick="toggleNightMode()" id="night-btn"><span id="night-icon">🌙</span></button>
-        <button class="theme-toggle" onclick="cycleCalmMode()" id="calm-btn"><span id="calm-icon">🌫️</span></button>
+        <button class="theme-toggle" onclick="cycleCalmMode()" id="calm-btn"><span id="calm-icon">☁️</span></button>
       </div>
     </div>
     <div class="gallery-grid" id="gallery-grid"></div>
@@ -446,8 +446,10 @@ function animateCalmMode() {
 function cycleCalmMode() {
   calmMode=(calmMode+1)%4;
   applyCalmMode();
-  const icons=['🌫️','🍃','🌧️','✨'];
-  document.getElementById('calm-icon').textContent=icons[calmMode];
+  // Updated icons – the first one is now a clear cloud ☁️ (suggests calm animated backgrounds / nature scenes)
+  // The rest match the actual animation that will play
+  const icons = ['☁️', '🍃', '🌧️', '✨'];
+  document.getElementById('calm-icon').textContent = icons[calmMode];
   saveData();
 }
 
