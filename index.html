@@ -567,7 +567,7 @@ function updateLeaf(p) {
     p.x = Math.random() * window.innerWidth;
   }
 }
-// MODE 2: Hyper-realistic volumetric clouds — multi-layered shading, soft volumetric shadows, bright rim lighting, irregular fluff
+// MODE 2: Hyper-realistic volumetric clouds — multi-layered shading, soft volumetric shadows, bright rim lighting, irregular fluff + TEXTURE
 function initClouds() {
   const W = window.innerWidth, H = window.innerHeight;
   // Large background clouds — more of them, richer depth
@@ -583,6 +583,7 @@ function initClouds() {
       radius: 125 + Math.random() * 165,
       layer: 0,
       puffs: genPuffs(7 + Math.floor(Math.random()*5), 125 + Math.random()*165),
+      textureSeed: Math.random() * Math.PI * 2   // for per-cloud texture variation
     });
   }
   // Mid-layer clouds — fluffier and more varied
@@ -598,6 +599,7 @@ function initClouds() {
       radius: 72 + Math.random() * 105,
       layer: 1,
       puffs: genPuffs(5 + Math.floor(Math.random()*4), 72 + Math.random()*105),
+      textureSeed: Math.random() * Math.PI * 2
     });
   }
   // Wispy foreground streaks — softer, more ethereal
@@ -618,12 +620,12 @@ function initClouds() {
 function genPuffs(count, baseR) {
   const puffs = [];
   for (let i = 0; i < count; i++) {
-    const angle = (i / count) * Math.PI * 2 + (Math.random() - 0.5) * 0.6; // slight randomness in placement
-    const dist = baseR * (0.22 + Math.random() * 0.52);
+    const angle = (i / count) * Math.PI * 2 + (Math.random() - 0.5) * 0.8;
+    const dist = baseR * (0.18 + Math.random() * 0.58);
     puffs.push({
       ox: Math.cos(angle) * dist,
-      oy: Math.sin(angle) * dist * 0.38,
-      r: baseR * (0.36 + Math.random() * 0.52),
+      oy: Math.sin(angle) * dist * 0.36,
+      r: baseR * (0.34 + Math.random() * 0.58),
     });
   }
   return puffs;
@@ -652,52 +654,71 @@ function drawCloud(ctx, p) {
 
   const allPuffs = [{ ox: 0, oy: 0, r: p.radius }, ...p.puffs];
 
-  // 1. Soft volumetric shadow layer (underneath the cloud body)
-  ctx.shadowColor = 'rgba(80,95,130,0.28)';
-  ctx.shadowBlur = 22;
+  // 1. Deep volumetric shadow layer (underneath the entire cloud)
+  ctx.shadowColor = 'rgba(65,85,120,0.32)';
+  ctx.shadowBlur = 28;
   allPuffs.forEach(puff => {
-    ctx.globalAlpha = p.opacity * 0.65 * (puff.r / p.radius);
-    ctx.fillStyle = 'rgba(200,215,245,0.35)';
+    ctx.globalAlpha = p.opacity * 0.68 * (puff.r / p.radius);
+    ctx.fillStyle = '#d0d8e8';
     ctx.beginPath();
-    ctx.arc(puff.ox + 9, puff.oy + 14, puff.r * 1.08, 0, Math.PI * 2);
+    ctx.arc(puff.ox + 11, puff.oy + 17, puff.r * 1.12, 0, Math.PI * 2);
     ctx.fill();
   });
   ctx.shadowBlur = 0;
 
   // 2. Main cloud body — rich multi-stop volumetric gradient with top-left lighting
-  allPuffs.forEach(puff => {
-    ctx.globalAlpha = p.opacity * (puff.r / p.radius) * 1.35;
+  allPuffs.forEach((puff, i) => {
+    ctx.globalAlpha = p.opacity * (0.95 + Math.sin(p.textureSeed + i) * 0.08) * (puff.r / p.radius) * 1.4;
     const g = ctx.createRadialGradient(
-      puff.ox - puff.r * 0.38, puff.oy - puff.r * 0.45, puff.r * 0.2,  // bright highlight source
-      puff.ox, puff.oy, puff.r * 1.12
+      puff.ox - puff.r * 0.42, puff.oy - puff.r * 0.52, puff.r * 0.18,  // bright highlight source
+      puff.ox + 4, puff.oy + 6, puff.r * 1.15
     );
     g.addColorStop(0,    'rgba(255,255,255,1)');
-    g.addColorStop(0.22, 'rgba(252,254,255,0.98)');
-    g.addColorStop(0.48, 'rgba(240,247,255,0.88)');
-    g.addColorStop(0.72, 'rgba(218,233,255,0.62)');
-    g.addColorStop(0.92, 'rgba(195,215,245,0.22)');
-    g.addColorStop(1,    'rgba(180,205,240,0)');
+    g.addColorStop(0.18, 'rgba(252,254,255,0.99)');
+    g.addColorStop(0.42, 'rgba(238,246,255,0.92)');
+    g.addColorStop(0.68, 'rgba(212,230,255,0.71)');
+    g.addColorStop(0.85, 'rgba(188,212,245,0.31)');
+    g.addColorStop(1,    'rgba(165,195,235,0)');
     ctx.fillStyle = g;
     ctx.beginPath();
     ctx.arc(puff.ox, puff.oy, puff.r, 0, Math.PI * 2);
     ctx.fill();
   });
 
-  // 3. Bright rim lighting / highlight on upper edges (hyper-realistic sunlit fluff)
-  ctx.shadowColor = 'rgba(255,255,255,0.75)';
-  ctx.shadowBlur = 11;
+  // 3. Hyper-realistic CLOUD TEXTURE (subtle fibrous turbulence)
+  ctx.shadowBlur = 0;
+  ctx.globalAlpha = p.opacity * 0.22;
+  ctx.strokeStyle = 'rgba(255,255,255,0.75)';
+  ctx.lineWidth = 1.8;
+  allPuffs.forEach((puff, i) => {
+    if (puff.r < p.radius * 0.6) return;
+    const noise = Math.sin(p.textureSeed * 1.8 + i * 0.7) * 4;
+    for (let t = 0; t < 7; t++) {
+      const tx = puff.ox + noise * (t - 3);
+      const ty = puff.oy - puff.r * 0.35 + t * 8;
+      ctx.beginPath();
+      ctx.moveTo(tx - puff.r * 0.45, ty);
+      ctx.quadraticCurveTo(tx - puff.r * 0.12, ty - 3, tx + puff.r * 0.38, ty);
+      ctx.stroke();
+    }
+  });
+
+  // 4. Bright rim lighting / highlight on upper edges (sunlit fluff)
+  ctx.shadowColor = 'rgba(255,255,255,0.85)';
+  ctx.shadowBlur = 14;
   allPuffs.forEach(puff => {
-    if (puff.r > p.radius * 0.55) {
-      ctx.globalAlpha = p.opacity * 0.55;
+    if (puff.r > p.radius * 0.52) {
+      ctx.globalAlpha = p.opacity * 0.62;
       const hg = ctx.createRadialGradient(
-        puff.ox - puff.r * 0.42, puff.oy - puff.r * 0.48, puff.r * 0.28,
-        puff.ox, puff.oy, puff.r * 0.92
+        puff.ox - puff.r * 0.45, puff.oy - puff.r * 0.52, puff.r * 0.26,
+        puff.ox, puff.oy, puff.r * 0.95
       );
-      hg.addColorStop(0, 'rgba(255,255,255,0.95)');
-      hg.addColorStop(0.65, 'rgba(255,255,255,0)');
+      hg.addColorStop(0, 'rgba(255,255,255,0.98)');
+      hg.addColorStop(0.58, 'rgba(255,255,255,0.12)');
+      hg.addColorStop(1, 'rgba(255,255,255,0)');
       ctx.fillStyle = hg;
       ctx.beginPath();
-      ctx.arc(puff.ox, puff.oy, puff.r * 0.88, 0, Math.PI * 2);
+      ctx.arc(puff.ox, puff.oy, puff.r * 0.91, 0, Math.PI * 2);
       ctx.fill();
     }
   });
@@ -708,6 +729,8 @@ function drawCloud(ctx, p) {
 
 function updateCloud(p) {
   p.x += p.speed;
+  // tiny vertical drift for natural movement
+  p.y += Math.sin(p.textureSeed * 0.8) * 0.08;
   if (p.x > window.innerWidth + 520) {
     p.x = -520;
     p.y = window.innerHeight * 0.02 + Math.random() * window.innerHeight * 0.5;
