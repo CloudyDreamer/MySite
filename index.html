@@ -13,7 +13,587 @@
     --border: #c8c4bc;
     --accent: #c0392b;
     --panel-left: 220px;
+    --panel-right:<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ARCHIVE • Cloudy Writes</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Playfair+Display:ital@1&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #e8e4dc;
+    --ink: #1a1a1a;
+    --muted: #888;
+    --border: #c8c4bc;
+    --accent: #c0392b;
+    --panel-left: 220px;
     --panel-right: 340px;
+    --mono: 'IBM Plex Mono', monospace;
+    --glass-bg: rgba(255,255,255,0.12);
+    --glass-border: rgba(255,255,255,0.18);
+  }
+
+  .night-mode {
+    --bg: #0a0a0a;
+    --ink: #f0f0f0;
+    --muted: #aaaaaa;
+    --border: #222222;
+    --accent: #ff5e4f;
+    --glass-bg: rgba(255,255,255,0.08);
+    --glass-border: rgba(255,255,255,0.15);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--mono);
+    height: 100vh;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* Calming backgrounds */
+  body.calm-leaves::before, body.calm-clouds::before, body.calm-rain::before {
+    content: ''; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+  }
+  body.calm-leaves::before { background: radial-gradient(circle at 30% 20%, rgba(255,240,180,0.28) 0%, transparent 55%), radial-gradient(circle at 70% 60%, rgba(180,255,200,0.25) 0%, transparent 65%); animation: sunnyLight 28s linear infinite; }
+  body.calm-leaves::after { content: '🍃 🌿 🍂 🌱'; position: fixed; inset: 0; z-index: -1; font-size: 42px; opacity: 0.14; animation: floatingLeaves 42s linear infinite; white-space: pre; }
+  body.calm-clouds::before { background: radial-gradient(circle at 20% 30%, rgba(240,240,255,0.38) 0%, transparent 70%), radial-gradient(circle at 80% 50%, rgba(220,240,255,0.32) 0%, transparent 65%); animation: slowDrift 70s linear infinite; }
+  body.calm-clouds::after { content: '☁️  ☁️  ☁️'; position: fixed; inset: 0; z-index: -1; font-size: 58px; opacity: 0.09; animation: floatingClouds 75s linear infinite; white-space: pre; }
+  body.calm-rain::before { background: linear-gradient(to bottom, rgba(180,220,255,0.22) 0%, transparent 75%); animation: rainMist 20s linear infinite; }
+  body.calm-rain::after { content: '🌧️ 🌧️'; position: fixed; inset: 0; z-index: -1; font-size: 26px; opacity: 0.11; animation: lightRain 14s linear infinite; white-space: pre; }
+
+  @keyframes sunnyLight { 0% { transform: translate(0,0); } 100% { transform: translate(15px,-18px); } }
+  @keyframes floatingLeaves { 0% { transform: translateY(130vh) rotate(0deg); } 100% { transform: translateY(-130vh) rotate(360deg); } }
+  @keyframes slowDrift { 0% { transform: translate(0,0); } 100% { transform: translate(25px,-30px); } }
+  @keyframes floatingClouds { 0% { transform: translateY(110vh); } 100% { transform: translateY(-110vh); } }
+  @keyframes rainMist { 0% { transform: translateY(0); } 100% { transform: translateY(-40px); } }
+  @keyframes lightRain { 0% { transform: translateY(0); } 100% { transform: translateY(-90vh); } }
+
+  #main-view { display: flex; height: 100vh; width: 100%; }
+
+  #panel-left, #panel-mid, #panel-right, .gallery-header, .gallery-item {
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+  }
+
+  #panel-left { width: var(--panel-left); min-width: var(--panel-left); height: 100vh; display: flex; flex-direction: column; padding: 28px 20px; overflow-y: auto; border-right: none; }
+  #panel-mid { flex: 1; height: 100vh; overflow-y: scroll; padding: 28px 40px 140px; border-right: none; }
+  #panel-right { width: var(--panel-right); min-width: var(--panel-right); height: 100vh; overflow-y: scroll; border-left: none; }
+
+  .site-name { font-size: 22px; font-weight: 500; letter-spacing: -0.02em; margin-bottom: 14px; }
+  .site-tagline { font-size: 11px; color: var(--muted); line-height: 1.6; margin-bottom: 28px; font-weight: 300; }
+
+  .left-section-label { font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin: 24px 0 8px; }
+  .left-nav-link { font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); cursor: pointer; margin-bottom: 8px; display: block; }
+  .left-nav-link:hover { color: var(--ink); }
+
+  .archive-list li { font-size: 10.5px; padding: 3px 0; cursor: pointer; transition: color 0.15s; color: var(--ink); }
+  .archive-list li:hover { color: var(--accent); }
+
+  /* About Page */
+  #about-page {
+    display: none; position: fixed; inset: 0; background: var(--bg); flex-direction: column;
+    align-items: center; justify-content: center; padding: 80px 40px; text-align: center; z-index: 100;
+  }
+  #about-page.active { display: flex; }
+
+  .about-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 88px;
+    font-style: italic;
+    font-weight: 400;
+    letter-spacing: -0.05em;
+    line-height: 1.05;
+    color: var(--ink);
+    margin-bottom: 32px;
+  }
+
+  .about-subtitle {
+    font-size: 15px;
+    max-width: 480px;
+    line-height: 1.75;
+    color: var(--muted);
+    margin-bottom: 40px;
+  }
+
+  .about-links {
+    display: flex;
+    gap: 32px;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .about-links a {
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .about-links a:hover { color: var(--ink); }
+
+  .back-btn {
+    position: absolute; top: 32px; left: 32px;
+    font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
+    background: none; border: none; color: var(--muted); cursor: pointer;
+  }
+  .back-btn:hover { color: var(--ink); }
+
+  /* Gallery */
+  .gallery-header { padding: 28px 20px 10px; display: flex; justify-content: space-between; align-items: baseline; position: sticky; top: 0; z-index: 5; }
+  .gallery-header-label, .gallery-sort-toggle, .theme-toggle { font-size: 9px; letter-spacing: 0.08em; color: var(--muted); cursor: pointer; background: none; border: none; text-transform: uppercase; }
+  .gallery-header-label:hover, .gallery-sort-toggle:hover, .theme-toggle:hover { color: var(--ink); }
+
+  .gallery-grid { display: flex; flex-direction: column; }
+  .gallery-item { border-bottom: 1px solid var(--border); position: relative; overflow: hidden; cursor: pointer; }
+  .gallery-img { width: 100%; aspect-ratio: 4/3; object-fit: cover; transition: opacity 0.2s; }
+  .gallery-item:hover .gallery-img { opacity: 0.85; }
+  .gallery-item-meta { padding: 8px 14px 10px; display: flex; justify-content: space-between; align-items: baseline; opacity: 0; transition: opacity 0.25s ease; pointer-events: none; }
+  .gallery-item.text-visible .gallery-item-meta { opacity: 1; pointer-events: auto; }
+  .gallery-item-caption { font-size: 10px; color: var(--muted); max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .gallery-item-date { font-size: 9px; color: var(--border); flex-shrink: 0; }
+
+  .pin-btn { position: absolute; top: 8px; right: 8px; background: var(--glass-bg); border: 1px solid var(--glass-border); font-family: var(--mono); font-size: 8px; letter-spacing: 0.08em; text-transform: uppercase; padding: 3px 7px; cursor: pointer; opacity: 0; transition: opacity 0.15s; z-index: 3; }
+  .gallery-item:hover .pin-btn { opacity: 1; }
+  .pin-btn:hover, .pin-btn.pinned-active { background: var(--ink); color: var(--bg); opacity: 1; }
+
+  .post { 
+    margin-bottom: 36px; 
+    padding-bottom: 32px; 
+    border-bottom: 1px solid var(--border); 
+    max-width: 620px;
+  }
+  .post:last-child { border-bottom: none; padding-bottom: 0; margin-bottom: 0; }
+  .post-meta { font-size: 10px; color: var(--muted); margin-bottom: 12px; }
+  .post-text { font-size: 13px; line-height: 1.85; white-space: pre-wrap; font-weight: 300; }
+
+  .post-image-thumb {
+    margin-top: 16px; 
+    width: 100%; 
+    max-width: 320px; 
+    aspect-ratio: 4/3;
+    object-fit: cover; 
+    cursor: pointer; 
+    border: 1px solid var(--border); 
+    transition: opacity 0.2s; 
+    display: block;
+  }
+
+  /* Compose bar - EXACTLY like your light screenshot */
+  .compose-bar { 
+    position: fixed; 
+    bottom: 0; 
+    left: var(--panel-left); 
+    right: var(--panel-right); 
+    background: #f5f2eb; 
+    border-top: 1px solid #d8d4cc; 
+    padding: 14px 28px; 
+    display: flex; 
+    gap: 12px; 
+    align-items: flex-start; 
+    z-index: 300; 
+  }
+  .compose-area { 
+    flex: 1; 
+    font-family: var(--mono); 
+    font-size: 13px; 
+    background: #fff; 
+    border: 1px solid #d8d4cc; 
+    border-radius: 3px; 
+    outline: none; 
+    resize: none; 
+    color: var(--ink); 
+    min-height: 42px; 
+    max-height: 120px; 
+    line-height: 1.6; 
+    padding: 10px 14px;
+  }
+  .compose-area::placeholder { color: #888; }
+  .compose-actions { display: flex; flex-direction: column; gap: 6px; align-items: flex-end; }
+  .compose-btn { 
+    font-family: var(--mono); 
+    font-size: 10px; 
+    letter-spacing: 0.06em; 
+    text-transform: uppercase; 
+    padding: 8px 20px; 
+    background: #1a1a1a; 
+    color: #fff; 
+    border: none; 
+    cursor: pointer; 
+  }
+  .compose-img-btn { 
+    font-family: var(--mono); 
+    font-size: 10px; 
+    letter-spacing: 0.06em; 
+    color: #666; 
+    background: transparent; 
+    border: 1px solid #d8d4cc; 
+    padding: 8px 14px; 
+    cursor: pointer; 
+  }
+  #file-input { display: none; }
+  .compose-preview { margin-top: 8px; display: flex; gap: 8px; flex-wrap: wrap; }
+  .compose-preview-thumb { width: 52px; height: 52px; object-fit: cover; border: 1px solid var(--border); cursor: pointer; }
+</style>
+</head>
+<body>
+
+<div id="main-view">
+  <aside id="panel-left">
+    <div class="site-name">ARCHIVE</div>
+    <div class="site-tagline">a personal archive of thoughts, images, and fragments.</div>
+
+    <div class="left-section-label">NAVIGATION</div>
+    <div class="left-nav-link" onclick="showMainView()">HOME</div>
+    <div class="left-nav-link" onclick="showAboutPage()">ABOUT</div>
+    <div class="left-nav-link" onclick="openGalleryPage()">GALLERY</div>
+
+    <div class="left-section-label">POSTS</div>
+    <div id="archive-index"></div>
+
+    <div class="left-spacer"></div>
+    <div class="left-section-label">SOCIAL</div>
+    <a class="social-link" href="#">x.com/handle</a>
+    <a class="social-link" href="#">instagram</a>
+  </aside>
+
+  <main id="panel-mid">
+    <div id="posts-container"></div>
+  </main>
+
+  <aside id="panel-right">
+    <div class="gallery-header">
+      <span class="gallery-header-label" onclick="openGalleryPage()">GALLERY</span>
+      <div style="display:flex; gap:14px;">
+        <button class="gallery-sort-toggle" onclick="toggleGallerySort()"><span id="sort-label">CHRONOLOGICAL</span></button>
+        <button class="theme-toggle" onclick="toggleNightMode()" id="night-btn"><span id="night-icon">🌙</span></button>
+        <button class="theme-toggle" onclick="cycleCalmMode()" id="calm-btn"><span id="calm-icon">🌫️</span></button>
+      </div>
+    </div>
+    <div class="gallery-grid" id="gallery-grid"></div>
+    <div class="empty-gallery" id="gallery-empty" style="display:none;">no images yet.</div>
+  </aside>
+</div>
+
+<!-- About Page -->
+<div id="about-page">
+  <button class="back-btn" onclick="hideAboutPage()">← BACK</button>
+  <div class="about-title">Cloudy Writes</div>
+  <div class="about-subtitle">
+    A personal space for my art, writing,<br>and half-formed ideas.
+  </div>
+  <div class="about-links">
+    <a href="#" onclick="hideAboutPage(); showMainView(); return false;">POSTS</a>
+    <a href="#" onclick="hideAboutPage(); openGalleryPage(); return false;">GALLERY</a>
+  </div>
+</div>
+
+<script>
+let posts = [];
+let galleryImages = [];
+let galleryPinned = new Set();
+let showPinnedFirst = false;
+let pendingImageData = [];
+let currentGalleryIndex = 0;
+let calmMode = 0;
+let showAllArchive = false;
+
+function saveData() {
+  localStorage.setItem('archive_posts', JSON.stringify(posts));
+  localStorage.setItem('archive_gallery', JSON.stringify(galleryImages));
+  localStorage.setItem('archive_pinned', JSON.stringify(Array.from(galleryPinned)));
+  localStorage.setItem('archive_night', document.documentElement.classList.contains('night-mode') ? '1' : '0');
+  localStorage.setItem('archive_calm', calmMode.toString());
+}
+
+function loadData() {
+  if (localStorage.getItem('archive_posts')) posts = JSON.parse(localStorage.getItem('archive_posts'));
+  if (localStorage.getItem('archive_gallery')) galleryImages = JSON.parse(localStorage.getItem('archive_gallery'));
+  if (localStorage.getItem('archive_pinned')) galleryPinned = new Set(JSON.parse(localStorage.getItem('archive_pinned')));
+
+  if (localStorage.getItem('archive_night') === '1') {
+    document.documentElement.classList.add('night-mode');
+    document.getElementById('night-icon').textContent = '☀️';
+  }
+  calmMode = parseInt(localStorage.getItem('archive_calm') || '0');
+  applyCalmMode();
+}
+
+function applyCalmMode() {
+  document.body.classList.remove('calm-leaves','calm-clouds','calm-rain');
+  if (calmMode === 1) document.body.classList.add('calm-leaves');
+  if (calmMode === 2) document.body.classList.add('calm-clouds');
+  if (calmMode === 3) document.body.classList.add('calm-rain');
+}
+
+function cycleCalmMode() {
+  calmMode = (calmMode + 1) % 4;
+  applyCalmMode();
+  const icons = ['🌫️','🍃','☁️','🌧️'];
+  document.getElementById('calm-icon').textContent = icons[calmMode];
+  saveData();
+}
+
+function toggleNightMode() {
+  const isNight = document.documentElement.classList.toggle('night-mode');
+  document.getElementById('night-icon').textContent = isNight ? '☀️' : '🌙';
+  saveData();
+}
+
+function showMainView() {
+  document.getElementById('about-page').classList.remove('active');
+}
+
+function showAboutPage() {
+  document.getElementById('about-page').classList.add('active');
+}
+
+function hideAboutPage() {
+  document.getElementById('about-page').classList.remove('active');
+}
+
+function seedData() {
+  if (posts.length > 0) return;
+  const now = Date.now(), day = 86400000;
+  posts = [
+    { id: 1, text: `10yo me would think i am cool.\nthat's all i care about.`, timestamp: now - day*3, images: [] },
+    { id: 2, text: `you're not burned out.\nyou're addicted.\n\nnot to work.\nto stimulation.\n\n...`, timestamp: now - day*2, images: [] },
+    { id: 3, text: `logo and icon set for Die Carz`, timestamp: now - day*1, images: [] }
+  ];
+  const defs = [
+    { sym: 'X', bg: '#2d2d2d', cap: 'logo and icon set — primary mark.' },
+    { sym: '◎', bg: '#4a3728', cap: 'icon set — secondary marks.' },
+    { sym: '▲', bg: '#1a3a2a', cap: 'wordmark variations.' }
+  ];
+  galleryImages = defs.map((d, i) => ({
+    id: 'g'+i, dataUrl: makeSVG(d.sym, d.bg), caption: d.cap,
+    timestamp: now - day*(1 - i*0.2), postId: 3
+  }));
+}
+
+function makeSVG(sym, bg) {
+  const s = `<svg xmlns='http://www.w3.org/2000/svg' width='400' height='300'><rect width='400' height='300' fill='${bg}'/><text x='200' y='170' text-anchor='middle' font-size='100' fill='rgba(255,255,255,0.15)' font-family='monospace'>${sym}</text></svg>`;
+  return 'data:image/svg+xml;base64,' + btoa(s);
+}
+
+function getSortedImages() {
+  let imgs = [...galleryImages];
+  if (showPinnedFirst) {
+    imgs.sort((a,b) => (galleryPinned.has(a.id)?0:1) - (galleryPinned.has(b.id)?0:1) || b.timestamp - a.timestamp);
+  } else {
+    imgs.sort((a,b) => b.timestamp - a.timestamp);
+  }
+  return imgs;
+}
+
+function renderPosts() {
+  const c = document.getElementById('posts-container');
+  c.innerHTML = '';
+  const sorted = [...posts].sort((a,b) => a.timestamp - b.timestamp);
+  const displayPosts = showAllArchive ? sorted : sorted.slice(0, 6);
+
+  displayPosts.forEach((post, i) => {
+    const div = document.createElement('div');
+    div.className = 'post';
+    div.id = 'post-'+post.id;
+    div.style.animationDelay = (i*0.05)+'s';
+    let imgs = '';
+    post.images?.forEach(img => {
+      if (img.dataUrl) imgs += `<img class="post-image-thumb" src="${img.dataUrl}" onclick="openGalleryPage()" alt="">`;
+    });
+    div.innerHTML = `<div class="post-meta">${formatDate(post.timestamp)}</div><div class="post-text">${escapeHtml(post.text)}</div>${imgs}`;
+    c.appendChild(div);
+  });
+
+  if (!showAllArchive && sorted.length > 6) {
+    const more = document.createElement('div');
+    more.style.marginTop = '20px';
+    more.style.fontSize = '10px';
+    more.style.letterSpacing = '0.08em';
+    more.style.textTransform = 'uppercase';
+    more.style.color = 'var(--accent)';
+    more.style.cursor = 'pointer';
+    more.textContent = 'MORE...';
+    more.onclick = () => {
+      showAllArchive = true;
+      renderPosts();
+    };
+    c.appendChild(more);
+  }
+
+  renderArchiveIndex(sorted);
+}
+
+function renderArchiveIndex(sorted) {
+  const c = document.getElementById('archive-index');
+  c.innerHTML = '';
+  const groups = {};
+  sorted.forEach(p => {
+    const k = new Date(p.timestamp).toLocaleString('en', {month:'long',year:'numeric'});
+    if (!groups[k]) groups[k] = [];
+    groups[k].push(p);
+  });
+  Object.entries(groups).reverse().forEach(([month, ps]) => {
+    const g = document.createElement('div');
+    g.className = 'archive-date-group';
+    const m = document.createElement('div');
+    m.className = 'archive-month';
+    m.textContent = month;
+    g.appendChild(m);
+    const ul = document.createElement('ul');
+    ul.className = 'archive-list';
+    ps.slice().reverse().forEach(post => {
+      const li = document.createElement('li');
+      const prev = post.text.split('\n')[0].slice(0,26);
+      li.textContent = prev + (post.text.length>26?'…':'');
+      li.onclick = () => document.getElementById('post-'+post.id)?.scrollIntoView({behavior:'smooth',block:'start'});
+      ul.appendChild(li);
+    });
+    g.appendChild(ul);
+    c.appendChild(g);
+  });
+}
+
+function renderGallery() {
+  const grid = document.getElementById('gallery-grid');
+  const empty = document.getElementById('gallery-empty');
+  grid.innerHTML = '';
+  const images = getSortedImages();
+  if (images.length === 0) { empty.style.display='block'; return; }
+  empty.style.display = 'none';
+
+  images.forEach((img, i) => {
+    const isPinned = galleryPinned.has(img.id);
+    const item = document.createElement('div');
+    item.className = 'gallery-item' + (isPinned?' pinned':'');
+
+    const gi = document.createElement('img');
+    gi.className = 'gallery-img';
+    gi.src = img.dataUrl;
+    gi.loading = 'lazy';
+
+    const pb = document.createElement('button');
+    pb.className = 'pin-btn' + (isPinned?' pinned-active':'');
+    pb.textContent = isPinned ? '↓ Unpin' : '↑ Pin';
+
+    const meta = document.createElement('div');
+    meta.className = 'gallery-item-meta';
+    meta.innerHTML = `<span class="gallery-item-caption">${escapeHtml(img.caption||'')}</span><span class="gallery-item-date">${formatDateShort(img.timestamp)}</span>`;
+
+    item.appendChild(gi);
+    item.appendChild(pb);
+    item.appendChild(meta);
+
+    gi.addEventListener('click', (e) => {
+      e.stopPropagation();
+      item.classList.toggle('text-visible');
+      openGalleryPage(i);
+    });
+
+    pb.addEventListener('click', e => { 
+      e.stopPropagation(); 
+      togglePin(img.id); 
+    });
+
+    grid.appendChild(item);
+  });
+}
+
+function toggleGallerySort() {
+  showPinnedFirst = !showPinnedFirst;
+  document.getElementById('sort-label').textContent = showPinnedFirst ? 'PINNED FIRST' : 'CHRONOLOGICAL';
+  renderGallery();
+}
+
+function togglePin(id) {
+  galleryPinned.has(id) ? galleryPinned.delete(id) : galleryPinned.add(id);
+  renderGallery();
+  saveData();
+}
+
+function openGalleryPage(startIndex) {
+  currentGalleryIndex = (startIndex !== undefined) ? startIndex : 0;
+  document.getElementById('main-view').style.display = 'none';
+  document.getElementById('gallery-page').style.display = 'flex';
+  renderGalleryPage();
+}
+
+function closeGalleryPage() {
+  document.getElementById('gallery-page').style.display = 'none';
+  document.getElementById('main-view').style.display = 'flex';
+  document.querySelectorAll('.gallery-item').forEach(item => item.classList.remove('text-visible'));
+}
+
+function renderGalleryPage() {
+  // Placeholder
+}
+
+function handleImageSelect(event) {
+  Array.from(event.target.files).forEach(file => {
+    const reader = new FileReader();
+    reader.onload = e => { 
+      pendingImageData.push({dataUrl: e.target.result, caption:''}); 
+      renderComposePreviews(); 
+    };
+    reader.readAsDataURL(file);
+  });
+  event.target.value = '';
+}
+
+function renderComposePreviews() {
+  const preview = document.getElementById('compose-preview');
+  preview.innerHTML = '';
+  pendingImageData.forEach((img, i) => {
+    const el = document.createElement('img');
+    el.src = img.dataUrl;
+    el.className = 'compose-preview-thumb';
+    el.title = 'click to remove';
+    el.onclick = () => { pendingImageData.splice(i,1); renderComposePreviews(); };
+    preview.appendChild(el);
+  });
+}
+
+function publishPost() {
+  const text = document.getElementById('compose-text').value.trim();
+  if (!text && pendingImageData.length === 0) return;
+  const now = Date.now();
+  const newPost = { id: now, text, timestamp: now, images: pendingImageData.map(img => ({dataUrl: img.dataUrl, caption: img.caption})) };
+  posts.unshift(newPost);
+  pendingImageData.forEach((img, i) => {
+    galleryImages.unshift({ id:'g'+now+i, dataUrl: img.dataUrl, caption: text||'', timestamp: now, postId: now });
+  });
+  pendingImageData = [];
+  document.getElementById('compose-text').value = '';
+  document.getElementById('compose-preview').innerHTML = '';
+  renderPosts();
+  renderGallery();
+  saveData();
+  setTimeout(() => document.getElementById('panel-mid').scrollTo({top:0,behavior:'smooth'}), 50);
+}
+
+function formatDate(ts) {
+  const d = new Date(ts);
+  return d.toLocaleDateString('en',{day:'2-digit',month:'short',year:'numeric'}) + ' · ' + d.toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit',hour12:false});
+}
+function formatDateShort(ts) { return new Date(ts).toLocaleDateString('en',{day:'2-digit',month:'short'}); }
+function escapeHtml(str) { return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+// INIT
+loadData();
+seedData();
+renderPosts();
+renderGallery();
+
+document.getElementById('compose-text').addEventListener('input', function() {
+  this.style.height = 'auto';
+  this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+});
+</script>
+</body>
+</html> 340px;
     --mono: 'IBM Plex Mono', monospace;
     --glass-bg: rgba(255,255,255,0.12);
     --glass-border: rgba(255,255,255,0.18);
