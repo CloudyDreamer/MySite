@@ -152,7 +152,6 @@
   .gallery-item:hover .pin-btn { opacity: 1; }
   .pin-btn:hover, .pin-btn.pinned-active { background: var(--ink); color: var(--bg); opacity: 1; }
 
-  /* Tight post spacing + controlled image size */
   .post { 
     margin-bottom: 36px; 
     padding-bottom: 32px; 
@@ -252,6 +251,7 @@ let showPinnedFirst = false;
 let pendingImageData = [];
 let currentGalleryIndex = 0;
 let calmMode = 0;
+let showAllArchive = false;
 
 function saveData() {
   localStorage.setItem('archive_posts', JSON.stringify(posts));
@@ -345,7 +345,10 @@ function renderPosts() {
   const c = document.getElementById('posts-container');
   c.innerHTML = '';
   const sorted = [...posts].sort((a,b) => a.timestamp - b.timestamp);
-  sorted.forEach((post, i) => {
+
+  const displayPosts = showAllArchive ? sorted : sorted.slice(0, 6);
+
+  displayPosts.forEach((post, i) => {
     const div = document.createElement('div');
     div.className = 'post';
     div.id = 'post-'+post.id;
@@ -357,6 +360,23 @@ function renderPosts() {
     div.innerHTML = `<div class="post-meta">${formatDate(post.timestamp)}</div><div class="post-text">${escapeHtml(post.text)}</div>${imgs}`;
     c.appendChild(div);
   });
+
+  if (!showAllArchive && sorted.length > 6) {
+    const more = document.createElement('div');
+    more.style.marginTop = '20px';
+    more.style.fontSize = '10px';
+    more.style.letterSpacing = '0.08em';
+    more.style.textTransform = 'uppercase';
+    more.style.color = 'var(--accent)';
+    more.style.cursor = 'pointer';
+    more.textContent = 'MORE...';
+    more.onclick = () => {
+      showAllArchive = true;
+      renderPosts();
+    };
+    c.appendChild(more);
+  }
+
   renderArchiveIndex(sorted);
 }
 
