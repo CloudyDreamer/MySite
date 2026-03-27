@@ -67,7 +67,7 @@
   }
 
   #panel-left { width: var(--panel-left); min-width: var(--panel-left); height: 100vh; display: flex; flex-direction: column; padding: 28px 20px; overflow-y: auto; border-right: none; }
-  #panel-mid { flex: 1; height: 100vh; overflow-y: scroll; padding: 28px 40px 100px; border-right: none; max-width: 680px; margin: 0 auto; }
+  #panel-mid { flex: 1; height: 100vh; overflow-y: scroll; padding: 28px 40px 100px; border-right: none; }
   #panel-right { width: var(--panel-right); min-width: var(--panel-right); height: 100vh; overflow-y: scroll; border-left: none; }
 
   .site-name { font-size: 22px; font-weight: 500; letter-spacing: -0.02em; margin-bottom: 14px; }
@@ -77,8 +77,15 @@
   .left-nav-link { font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); cursor: pointer; margin-bottom: 8px; display: block; }
   .left-nav-link:hover { color: var(--ink); }
 
-  /* Smaller post titles in left panel */
-  .archive-list li { font-size: 10.5px; padding: 3px 0; cursor: pointer; transition: color 0.15s; color: var(--ink); }
+  /* Smaller post titles with hover highlight */
+  .archive-list li { 
+    font-size: 10.5px; 
+    padding: 3px 0; 
+    cursor: pointer; 
+    transition: color 0.15s; 
+    color: var(--ink); 
+  }
+  .archive-list li:hover { color: var(--accent); }
 
   /* About Page */
   #about-page {
@@ -145,8 +152,14 @@
   .gallery-item:hover .pin-btn { opacity: 1; }
   .pin-btn:hover, .pin-btn.pinned-active { background: var(--ink); color: var(--bg); opacity: 1; }
 
-  .post { margin-bottom: 48px; padding-bottom: 40px; border-bottom: 1px solid var(--border); max-width: 620px; }
-  .post-meta { font-size: 10px; color: var(--muted); margin-bottom: 14px; }
+  /* Tighter post spacing like earlier versions */
+  .post { 
+    margin-bottom: 36px; 
+    padding-bottom: 32px; 
+    border-bottom: 1px solid var(--border); 
+  }
+  .post:last-child { border-bottom: none; padding-bottom: 0; margin-bottom: 0; }
+  .post-meta { font-size: 10px; color: var(--muted); margin-bottom: 12px; }
   .post-text { font-size: 13px; line-height: 1.85; white-space: pre-wrap; font-weight: 300; }
 
   .compose-bar { 
