@@ -15,6 +15,19 @@
     --panel-left: 220px;
     --panel-right: 340px;
     --mono: 'IBM Plex Mono', monospace;
+    --glass-bg: rgba(255,255,255,0.12);
+    --glass-border: rgba(255,255,255,0.18);
+  }
+
+  /* NIGHT MODE OVERRIDES */
+  .night-mode {
+    --bg: #0a0a0a;
+    --ink: #f0f0f0;
+    --muted: #aaaaaa;
+    --border: #222222;
+    --accent: #ff5e4f;
+    --glass-bg: rgba(255,255,255,0.08);
+    --glass-border: rgba(255,255,255,0.15);
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -25,21 +38,38 @@
     font-family: var(--mono);
     height: 100vh;
     overflow: hidden;
+    transition: background 0.4s ease;
   }
 
   #main-view { display: flex; height: 100vh; width: 100%; }
+
+  /* GLASSMORPHISM (frosted glass like the DANY example) */
+  #panel-left,
+  #panel-mid,
+  #panel-right,
+  .compose-bar,
+  .gallery-header,
+  .gallery-item {
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    transition: all 0.4s ease;
+  }
+
+  #panel-left { border-right: none; }
+  #panel-mid { border-right: none; }
+  #panel-right { border-left: none; }
 
   /* LEFT PANEL */
   #panel-left {
     width: var(--panel-left);
     min-width: var(--panel-left);
     height: 100vh;
-    border-right: 1px solid var(--border);
     display: flex;
     flex-direction: column;
     padding: 28px 20px;
     overflow-y: auto;
-    background: var(--bg);
     z-index: 10;
   }
   #panel-left::-webkit-scrollbar { width: 3px; }
@@ -72,7 +102,7 @@
   /* MIDDLE PANEL */
   #panel-mid {
     flex: 1; height: 100vh; overflow-y: scroll;
-    border-right: 1px solid var(--border); padding: 28px 28px 80px; scroll-behavior: smooth;
+    padding: 28px 28px 80px; scroll-behavior: smooth;
   }
   #panel-mid::-webkit-scrollbar { width: 4px; }
   #panel-mid::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
@@ -95,7 +125,6 @@
 
   .compose-bar {
     position: fixed; bottom: 0; left: var(--panel-left); right: var(--panel-right);
-    background: var(--bg); border-top: 1px solid var(--border);
     padding: 12px 28px; display: flex; gap: 10px; align-items: flex-start; z-index: 100;
   }
   .compose-area {
@@ -119,27 +148,15 @@
   .compose-preview { margin-top: 8px; display: flex; gap: 8px; flex-wrap: wrap; }
   .compose-preview-thumb { width: 52px; height: 52px; object-fit: cover; border: 1px solid var(--border); cursor: pointer; }
 
-  /* RIGHT PANEL - Gallery with hidden text until clicked */
-  #panel-right { 
-    width: var(--panel-right); 
-    min-width: var(--panel-right); 
-    height: 100vh; 
-    overflow-y: scroll; 
-    background: var(--bg); 
-  }
+  /* RIGHT PANEL */
+  #panel-right { width: var(--panel-right); min-width: var(--panel-right); height: 100vh; overflow-y: scroll; }
+
   #panel-right::-webkit-scrollbar { width: 4px; }
   #panel-right::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 
   .gallery-header {
-    padding: 28px 20px 10px; 
-    display: flex; 
-    justify-content: space-between; 
-    align-items: baseline;
-    border-bottom: 1px solid var(--border); 
-    position: sticky; 
-    top: 0; 
-    background: var(--bg); 
-    z-index: 5;
+    padding: 28px 20px 10px; display: flex; justify-content: space-between; align-items: baseline;
+    position: sticky; top: 0; z-index: 5;
   }
   .gallery-header-label { 
     font-size: 9px; letter-spacing: 0.08em; color: var(--muted); cursor: pointer; 
@@ -147,12 +164,14 @@
     transition: color 0.15s; display: inline; 
   }
   .gallery-header-label:hover { color: var(--ink); }
-  .gallery-sort-toggle {
+  .gallery-sort-toggle,
+  .theme-toggle {
     font-size: 9px; letter-spacing: 0.08em; color: var(--muted); cursor: pointer;
     background: none; border: none; font-family: var(--mono); text-transform: uppercase; 
     transition: color 0.15s;
   }
-  .gallery-sort-toggle:hover { color: var(--ink); }
+  .gallery-sort-toggle:hover,
+  .theme-toggle:hover { color: var(--ink); }
 
   .gallery-grid { display: flex; flex-direction: column; }
   .gallery-item { 
@@ -162,22 +181,12 @@
     overflow: hidden; 
   }
   .gallery-item.pinned::before {
-    content: '↑ PINNED'; 
-    position: absolute; top: 8px; left: 8px;
-    font-size: 8px; letter-spacing: 0.1em; 
-    background: var(--ink); color: var(--bg); 
-    padding: 2px 6px; z-index: 2;
+    content: '↑ PINNED'; position: absolute; top: 8px; left: 8px;
+    font-size: 8px; letter-spacing: 0.1em; background: var(--ink); color: var(--bg); padding: 2px 6px; z-index: 2;
   }
-  .gallery-img { 
-    width: 100%; 
-    display: block; 
-    aspect-ratio: 4/3; 
-    object-fit: cover; 
-    transition: opacity 0.2s; 
-  }
+  .gallery-img { width: 100%; display: block; aspect-ratio: 4/3; object-fit: cover; transition: opacity 0.2s; }
   .gallery-item:hover .gallery-img { opacity: 0.85; }
 
-  /* Hidden text until clicked */
   .gallery-item-meta { 
     padding: 8px 14px 10px; 
     display: flex; 
@@ -192,33 +201,19 @@
     pointer-events: auto;
   }
   .gallery-item.text-visible {
-    background: rgba(255,255,255,0.03);
+    background: rgba(255,255,255,0.06);
   }
 
-  .gallery-item-caption { 
-    font-size: 10px; color: var(--muted); 
-    max-width: 200px; white-space: nowrap; 
-    overflow: hidden; text-overflow: ellipsis; 
-  }
-  .gallery-item-date { 
-    font-size: 9px; color: var(--border); flex-shrink: 0; 
-  }
+  .gallery-item-caption { font-size: 10px; color: var(--muted); max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .gallery-item-date { font-size: 9px; color: var(--border); flex-shrink: 0; }
   .pin-btn {
-    position: absolute; top: 8px; right: 8px; 
-    background: rgba(240,237,230,0.85);
-    border: 1px solid var(--border); 
-    font-family: var(--mono); font-size: 8px;
-    letter-spacing: 0.08em; text-transform: uppercase; 
-    padding: 3px 7px; cursor: pointer; 
-    opacity: 0; transition: opacity 0.15s; z-index: 3;
+    position: absolute; top: 8px; right: 8px; background: var(--glass-bg);
+    border: 1px solid var(--glass-border); font-family: var(--mono); font-size: 8px;
+    letter-spacing: 0.08em; text-transform: uppercase; padding: 3px 7px; cursor: pointer; opacity: 0; transition: opacity 0.15s; z-index: 3;
   }
   .gallery-item:hover .pin-btn { opacity: 1; }
-  .pin-btn:hover, .pin-btn.pinned-active { 
-    background: var(--ink); color: var(--bg); opacity: 1; 
-  }
-  .empty-gallery { 
-    padding: 40px 20px; font-size: 11px; color: var(--muted); text-align: center; 
-  }
+  .pin-btn:hover, .pin-btn.pinned-active { background: var(--ink); color: var(--bg); opacity: 1; }
+  .empty-gallery { padding: 40px 20px; font-size: 11px; color: var(--muted); text-align: center; }
 
   /* noise */
   body::after {
@@ -227,7 +222,7 @@
     background-size: 256px; z-index: 9999;
   }
 
-  /* GALLERY PAGE */
+  /* GALLERY PAGE (also gets glass in night mode) */
   #gallery-page {
     display: none; height: 100vh; width: 100%;
     background: var(--bg); flex-direction: row;
@@ -236,7 +231,8 @@
 
   #gallery-topbar {
     position: fixed; top: 0; left: 0; right: 0; height: 48px;
-    border-bottom: 1px solid var(--border); background: var(--bg);
+    border-bottom: 1px solid var(--border); background: var(--glass-bg);
+    backdrop-filter: blur(20px);
     display: flex; align-items: center; padding: 0 24px; gap: 20px; z-index: 200;
   }
 
@@ -261,13 +257,11 @@
 
   .gallery-nav-btn {
     position: absolute; top: 50%; transform: translateY(-50%);
-    background: var(--bg); border: 1px solid var(--border); font-family: var(--mono);
+    background: var(--glass-bg); border: 1px solid var(--glass-border); font-family: var(--mono);
     font-size: 20px; color: var(--ink); width: 44px; height: 44px; cursor: pointer;
-    display: flex; align-items: center; justify-content: center; 
-    transition: background 0.15s, border-color 0.15s; z-index: 10;
+    display: flex; align-items: center; justify-content: center; transition: background 0.15s, border-color 0.15s; z-index: 10;
   }
   .gallery-nav-btn:hover { background: var(--ink); color: var(--bg); border-color: var(--ink); }
-  .gallery-nav-btn:disabled { opacity: 0.2; cursor: default; }
   #gallery-prev { left: 12px; }
   #gallery-next { right: 12px; }
 
@@ -279,25 +273,18 @@
 
   #gallery-thumbs {
     width: 200px; min-width: 200px; height: 100vh; padding-top: 48px;
-    border-left: 1px solid var(--border); overflow-y: auto; background: var(--bg); 
+    border-left: 1px solid var(--border); overflow-y: auto; background: var(--glass-bg);
+    backdrop-filter: blur(20px);
     display: flex; flex-direction: column;
   }
   #gallery-thumbs::-webkit-scrollbar { width: 3px; }
   #gallery-thumbs::-webkit-scrollbar-thumb { background: var(--border); }
 
-  .thumb-item { 
-    flex-shrink: 0; cursor: pointer; border-bottom: 1px solid var(--border); 
-    position: relative; overflow: hidden; 
-  }
+  .thumb-item { flex-shrink: 0; cursor: pointer; border-bottom: 1px solid var(--border); position: relative; overflow: hidden; }
   .thumb-item img { width: 100%; aspect-ratio: 4/3; object-fit: cover; display: block; transition: opacity 0.15s; }
   .thumb-item:hover img { opacity: 0.75; }
-  .thumb-item.active::after { 
-    content: ''; position: absolute; inset: 0; border: 2px solid var(--ink); pointer-events: none; 
-  }
-  .thumb-item-label { 
-    padding: 5px 8px 6px; font-size: 9px; color: var(--muted); 
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; 
-  }
+  .thumb-item.active::after { content: ''; position: absolute; inset: 0; border: 2px solid var(--ink); pointer-events: none; }
+  .thumb-item-label { padding: 5px 8px 6px; font-size: 9px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
   #gallery-empty-page {
     display: none; align-items: center; justify-content: center;
@@ -308,6 +295,7 @@
 <body>
 
 <div id="main-view">
+
   <aside id="panel-left">
     <div class="site-name">ARCHIVE</div>
     <div class="site-tagline">a personal archive of thoughts, images, and fragments.</div>
@@ -342,9 +330,15 @@
   <aside id="panel-right">
     <div class="gallery-header">
       <span class="gallery-header-label" onclick="openGalleryPage()">gallery</span>
-      <button class="gallery-sort-toggle" onclick="toggleGallerySort()">
-        <span id="sort-label">chronological</span>
-      </button>
+      <div style="display:flex;gap:16px;">
+        <button class="gallery-sort-toggle" onclick="toggleGallerySort()">
+          <span id="sort-label">chronological</span>
+        </button>
+        <!-- NIGHT MODE BUTTON -->
+        <button class="theme-toggle" onclick="toggleNightMode()" id="theme-btn">
+          <span id="theme-icon">☀️</span>
+        </button>
+      </div>
     </div>
     <div class="gallery-grid" id="gallery-grid"></div>
     <div class="empty-gallery" id="gallery-empty" style="display:none;">no images yet.</div>
@@ -371,6 +365,26 @@
 </div>
 
 <script>
+// === PERSISTENCE + THEME ===
+function saveData() {
+  localStorage.setItem('archive_posts', JSON.stringify(posts));
+  localStorage.setItem('archive_gallery', JSON.stringify(galleryImages));
+  localStorage.setItem('archive_pinned', JSON.stringify(Array.from(galleryPinned)));
+  localStorage.setItem('archive_theme', document.documentElement.classList.contains('night-mode') ? 'night' : 'light');
+}
+
+function loadData() {
+  const savedPosts = localStorage.getItem('archive_posts');
+  const savedGallery = localStorage.getItem('archive_gallery');
+  const savedPinned = localStorage.getItem('archive_pinned');
+  const savedTheme = localStorage.getItem('archive_theme');
+
+  if (savedPosts) posts = JSON.parse(savedPosts);
+  if (savedGallery) galleryImages = JSON.parse(savedGallery);
+  if (savedPinned) galleryPinned = new Set(JSON.parse(savedPinned));
+  if (savedTheme === 'night') document.documentElement.classList.add('night-mode');
+}
+
 let posts = [];
 let galleryImages = [];
 let galleryPinned = new Set();
@@ -379,11 +393,12 @@ let pendingImageData = [];
 let currentGalleryIndex = 0;
 
 function seedData() {
+  if (posts.length > 0) return;
   const now = Date.now(), day = 86400000;
   posts = [
     { id: 1, text: `10yo me would think i am cool.\nthat's all i care about.`, timestamp: now - day*3, images: [] },
-    { id: 2, text: `you're not burned out.\nyou're addicted.\n\nnot to work.\nto stimulation.\n\nyou aren't tired.\nyou don't lack focus.\nyou simply practice\ndistraction.\nevery waking minute.\n\nscroll. check. tap. swipe.\nagain. again. again.\n\nso when nothing is there your\nbrain thinks something is\nwrong.\n\nsit in silence for 15 minutes.\n\nno phone.\nno music.\nno stimulation.\n\nif it makes you anxious,\nuncomfortable, annoying —\n\ngood.\n\nthat's not failure.\nthat's the point.`, timestamp: now - day*2, images: [] },
-    { id: 3, text: `logo and icon set for Die Carz`, timestamp: now - day*1, images: [{ dataUrl: null, caption: 'brand identity for Die Carz.' }] }
+    { id: 2, text: `you're not burned out.\nyou're addicted.\n\nnot to work.\nto stimulation.\n\n...`, timestamp: now - day*2, images: [] },
+    { id: 3, text: `logo and icon set for Die Carz`, timestamp: now - day*1, images: [] }
   ];
   const defs = [
     { sym: 'X', bg: '#2d2d2d', cap: 'logo and icon set — primary mark.' },
@@ -404,16 +419,20 @@ function makeSVG(sym, bg) {
 function getSortedImages() {
   let imgs = [...galleryImages];
   if (showPinnedFirst) {
-    imgs.sort((a,b) => {
-      const ap = galleryPinned.has(a.id)?0:1, bp = galleryPinned.has(b.id)?0:1;
-      return ap!==bp ? ap-bp : b.timestamp-a.timestamp;
-    });
+    imgs.sort((a,b) => (galleryPinned.has(a.id)?0:1) - (galleryPinned.has(b.id)?0:1) || b.timestamp - a.timestamp);
   } else {
     imgs.sort((a,b) => b.timestamp - a.timestamp);
   }
   return imgs;
 }
 
+function toggleNightMode() {
+  const isNight = document.documentElement.classList.toggle('night-mode');
+  document.getElementById('theme-icon').textContent = isNight ? '🌙' : '☀️';
+  saveData();
+}
+
+// ── POSTS & GALLERY RENDER (same as before) ──
 function renderPosts() {
   const c = document.getElementById('posts-container');
   c.innerHTML = '';
@@ -493,7 +512,6 @@ function renderGallery() {
     item.appendChild(pb);
     item.appendChild(meta);
 
-    // Click image → toggle text visibility + open full gallery
     gi.addEventListener('click', (e) => {
       e.stopPropagation();
       item.classList.toggle('text-visible');
@@ -518,6 +536,7 @@ function toggleGallerySort() {
 function togglePin(id) {
   galleryPinned.has(id) ? galleryPinned.delete(id) : galleryPinned.add(id);
   renderGallery();
+  saveData();
   if (document.getElementById('gallery-page').classList.contains('active')) renderGalleryPage();
 }
 
@@ -529,133 +548,4 @@ function openGalleryPage(startIndex) {
 }
 
 function closeGalleryPage() {
-  document.getElementById('gallery-page').classList.remove('active');
-  document.getElementById('main-view').style.display = 'flex';
-}
-
-function renderGalleryPage() {
-  const images = getSortedImages();
-  const mainImg = document.getElementById('gallery-main-img');
-  const emptyEl = document.getElementById('gallery-empty-page');
-  const thumbsEl = document.getElementById('gallery-thumbs');
-  const countEl = document.getElementById('gallery-page-count');
-  const captionEl = document.getElementById('gallery-img-caption');
-  const dateEl = document.getElementById('gallery-img-date');
-  const prevBtn = document.getElementById('gallery-prev');
-  const nextBtn = document.getElementById('gallery-next');
-
-  if (images.length === 0) {
-    mainImg.style.display = 'none';
-    emptyEl.style.display = 'flex';
-    prevBtn.style.display = 'none';
-    nextBtn.style.display = 'none';
-    countEl.textContent = '';
-    captionEl.textContent = '';
-    dateEl.textContent = '';
-    thumbsEl.innerHTML = '';
-    return;
-  }
-
-  emptyEl.style.display = 'none';
-  mainImg.style.display = 'block';
-  prevBtn.style.display = 'flex';
-  nextBtn.style.display = 'flex';
-
-  if (currentGalleryIndex >= images.length) currentGalleryIndex = 0;
-  if (currentGalleryIndex < 0) currentGalleryIndex = images.length - 1;
-
-  const img = images[currentGalleryIndex];
-  mainImg.src = img.dataUrl;
-  captionEl.textContent = img.caption || '';
-  dateEl.textContent = formatDate(img.timestamp);
-  countEl.textContent = `${currentGalleryIndex+1} / ${images.length}`;
-
-  thumbsEl.innerHTML = '';
-  images.forEach((im, i) => {
-    const item = document.createElement('div');
-    item.className = 'thumb-item' + (i===currentGalleryIndex?' active':'');
-    const timg = document.createElement('img');
-    timg.src = im.dataUrl;
-    timg.loading = 'lazy';
-    const label = document.createElement('div');
-    label.className = 'thumb-item-label';
-    label.textContent = im.caption || '—';
-    item.appendChild(timg);
-    item.appendChild(label);
-    item.addEventListener('click', () => { currentGalleryIndex = i; renderGalleryPage(); });
-    thumbsEl.appendChild(item);
-    if (i === currentGalleryIndex) setTimeout(() => item.scrollIntoView({block:'nearest'}), 0);
-  });
-}
-
-function galleryNav(dir) {
-  const images = getSortedImages();
-  currentGalleryIndex = (currentGalleryIndex + dir + images.length) % images.length;
-  renderGalleryPage();
-}
-
-document.addEventListener('keydown', e => {
-  if (!document.getElementById('gallery-page').classList.contains('active')) return;
-  if (e.key === 'ArrowLeft') galleryNav(-1);
-  if (e.key === 'ArrowRight') galleryNav(1);
-  if (e.key === 'Escape') closeGalleryPage();
-});
-
-function handleImageSelect(event) {
-  Array.from(event.target.files).forEach(file => {
-    const reader = new FileReader();
-    reader.onload = e => { pendingImageData.push({dataUrl: e.target.result, caption:''}); renderComposePreviews(); };
-    reader.readAsDataURL(file);
-  });
-  event.target.value = '';
-}
-
-function renderComposePreviews() {
-  const preview = document.getElementById('compose-preview');
-  preview.innerHTML = '';
-  pendingImageData.forEach((img, i) => {
-    const el = document.createElement('img');
-    el.src = img.dataUrl;
-    el.className = 'compose-preview-thumb';
-    el.title = 'click to remove';
-    el.onclick = () => { pendingImageData.splice(i,1); renderComposePreviews(); };
-    preview.appendChild(el);
-  });
-}
-
-function publishPost() {
-  const text = document.getElementById('compose-text').value.trim();
-  if (!text && pendingImageData.length === 0) return;
-  const now = Date.now();
-  const newPost = { id: now, text, timestamp: now, images: pendingImageData.map(img => ({dataUrl: img.dataUrl, caption: img.caption})) };
-  posts.unshift(newPost);
-  pendingImageData.forEach((img, i) => {
-    galleryImages.unshift({ id:'g'+now+i, dataUrl: img.dataUrl, caption: text||'', timestamp: now, postId: now });
-  });
-  pendingImageData = [];
-  document.getElementById('compose-text').value = '';
-  document.getElementById('compose-preview').innerHTML = '';
-  renderPosts();
-  renderGallery();
-  setTimeout(() => document.getElementById('panel-mid').scrollTo({top:0,behavior:'smooth'}), 50);
-}
-
-function formatDate(ts) {
-  const d = new Date(ts);
-  return d.toLocaleDateString('en',{day:'2-digit',month:'short',year:'numeric'}) + ' · ' + d.toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit',hour12:false});
-}
-function formatDateShort(ts) { return new Date(ts).toLocaleDateString('en',{day:'2-digit',month:'short'}); }
-function escapeHtml(str) { return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-
-// Initialize
-seedData();
-renderPosts();
-renderGallery();
-
-document.getElementById('compose-text').addEventListener('input', function() {
-  this.style.height = 'auto';
-  this.style.height = Math.min(this.scrollHeight, 120) + 'px';
-});
-</script>
-</body>
-</html>
+  document.getElementBy
