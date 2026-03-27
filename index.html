@@ -13,21 +13,6 @@
     --border: #c8c4bc;
     --accent: #c0392b;
     --panel-left: 220px;
-    --panel-right:<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ARCHIVE • Cloudy Writes</title>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Playfair+Display:ital@1&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --bg: #e8e4dc;
-    --ink: #1a1a1a;
-    --muted: #888;
-    --border: #c8c4bc;
-    --accent: #c0392b;
-    --panel-left: 220px;
     --panel-right: 340px;
     --mono: 'IBM Plex Mono', monospace;
     --glass-bg: rgba(255,255,255,0.12);
@@ -55,45 +40,59 @@
     position: relative;
   }
 
-  /* Calming backgrounds */
-  body.calm-leaves::before, body.calm-clouds::before, body.calm-rain::before {
-    content: ''; position: fixed; inset: 0; z-index: -1; pointer-events: none;
-  }
-  body.calm-leaves::before { background: radial-gradient(circle at 30% 20%, rgba(255,240,180,0.28) 0%, transparent 55%), radial-gradient(circle at 70% 60%, rgba(180,255,200,0.25) 0%, transparent 65%); animation: sunnyLight 28s linear infinite; }
-  body.calm-leaves::after { content: '🍃 🌿 🍂 🌱'; position: fixed; inset: 0; z-index: -1; font-size: 42px; opacity: 0.14; animation: floatingLeaves 42s linear infinite; white-space: pre; }
-  body.calm-clouds::before { background: radial-gradient(circle at 20% 30%, rgba(240,240,255,0.38) 0%, transparent 70%), radial-gradient(circle at 80% 50%, rgba(220,240,255,0.32) 0%, transparent 65%); animation: slowDrift 70s linear infinite; }
-  body.calm-clouds::after { content: '☁️  ☁️  ☁️'; position: fixed; inset: 0; z-index: -1; font-size: 58px; opacity: 0.09; animation: floatingClouds 75s linear infinite; white-space: pre; }
-  body.calm-rain::before { background: linear-gradient(to bottom, rgba(180,220,255,0.22) 0%, transparent 75%); animation: rainMist 20s linear infinite; }
-  body.calm-rain::after { content: '🌧️ 🌧️'; position: fixed; inset: 0; z-index: -1; font-size: 26px; opacity: 0.11; animation: lightRain 14s linear infinite; white-space: pre; }
 
-  @keyframes sunnyLight { 0% { transform: translate(0,0); } 100% { transform: translate(15px,-18px); } }
-  @keyframes floatingLeaves { 0% { transform: translateY(130vh) rotate(0deg); } 100% { transform: translateY(-130vh) rotate(360deg); } }
-  @keyframes slowDrift { 0% { transform: translate(0,0); } 100% { transform: translate(25px,-30px); } }
-  @keyframes floatingClouds { 0% { transform: translateY(110vh); } 100% { transform: translateY(-110vh); } }
-  @keyframes rainMist { 0% { transform: translateY(0); } 100% { transform: translateY(-40px); } }
-  @keyframes lightRain { 0% { transform: translateY(0); } 100% { transform: translateY(-90vh); } }
 
   #main-view { display: flex; height: 100vh; width: 100%; }
 
-  #panel-left, #panel-mid, #panel-right, .gallery-header, .gallery-item {
-    background: var(--glass-bg);
-    backdrop-filter: blur(20px);
-    border: 1px solid var(--glass-border);
+  #panel-left {
+    width: var(--panel-left); min-width: var(--panel-left); max-width: var(--panel-left);
+    height: 100vh; display: flex; flex-direction: column; padding: 28px 20px;
+    overflow-y: auto; overflow-x: hidden;
+    background: var(--bg); border-right: 1px solid var(--border);
+    flex-shrink: 0;
   }
+  #panel-mid {
+    flex: 1; min-width: 0; height: 100vh; overflow-y: scroll; overflow-x: hidden;
+    padding: 28px 40px 140px; background: var(--bg);
+    box-shadow: inset -1px 0 0 var(--border);
+  }
+  #panel-right {
+    width: var(--panel-right); min-width: var(--panel-right); max-width: var(--panel-right);
+    height: 100vh; overflow-y: scroll; overflow-x: hidden;
+    background: var(--bg); border-left: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  .gallery-header { background: var(--bg); }
+  .gallery-item { background: var(--bg); }
 
-  #panel-left { width: var(--panel-left); min-width: var(--panel-left); height: 100vh; display: flex; flex-direction: column; padding: 28px 20px; overflow-y: auto; border-right: none; }
-  #panel-mid { flex: 1; height: 100vh; overflow-y: scroll; padding: 28px 40px 140px; border-right: none; }
-  #panel-right { width: var(--panel-right); min-width: var(--panel-right); height: 100vh; overflow-y: scroll; border-left: none; }
+  #panel-left::-webkit-scrollbar, #panel-mid::-webkit-scrollbar, #panel-right::-webkit-scrollbar { width: 3px; }
+  #panel-left::-webkit-scrollbar-thumb, #panel-mid::-webkit-scrollbar-thumb, #panel-right::-webkit-scrollbar-thumb { background: var(--border); }
 
   .site-name { font-size: 22px; font-weight: 500; letter-spacing: -0.02em; margin-bottom: 14px; }
   .site-tagline { font-size: 11px; color: var(--muted); line-height: 1.6; margin-bottom: 28px; font-weight: 300; }
 
-  .left-section-label { font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin: 24px 0 8px; }
-  .left-nav-link { font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); cursor: pointer; margin-bottom: 8px; display: block; }
+  .left-section-label {
+    font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--muted); margin: 24px 0 8px;
+  }
+
+  /* LEFT NAV LINKS — same font/color as left-section-label, hover darkens like CHRONOLOGICAL */
+  .left-nav-link {
+    font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--muted); cursor: pointer; transition: color 0.15s;
+    margin-bottom: 6px; display: block;
+  }
   .left-nav-link:hover { color: var(--ink); }
 
+  .left-spacer { flex: 1; }
+  .social-link { font-size: 11px; color: var(--muted); text-decoration: none; transition: color 0.15s; display: block; padding: 2px 0; }
+  .social-link:hover { color: var(--ink); }
+
+  .archive-list { list-style: none; margin-bottom: 10px; }
   .archive-list li { font-size: 10.5px; padding: 3px 0; cursor: pointer; transition: color 0.15s; color: var(--ink); }
   .archive-list li:hover { color: var(--accent); }
+  .archive-date-group { margin-bottom: 14px; }
+  .archive-month { font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; margin-top: 10px; }
 
   /* About Page */
   #about-page {
@@ -103,140 +102,140 @@
   #about-page.active { display: flex; }
 
   .about-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 88px;
-    font-style: italic;
-    font-weight: 400;
-    letter-spacing: -0.05em;
-    line-height: 1.05;
-    color: var(--ink);
-    margin-bottom: 32px;
+    font-family: 'Playfair Display', serif; font-size: 88px; font-style: italic;
+    font-weight: 400; letter-spacing: -0.05em; line-height: 1.05; color: var(--ink); margin-bottom: 32px;
   }
-
-  .about-subtitle {
-    font-size: 15px;
-    max-width: 480px;
-    line-height: 1.75;
-    color: var(--muted);
-    margin-bottom: 40px;
-  }
-
-  .about-links {
-    display: flex;
-    gap: 32px;
-    font-size: 11px;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-  }
-  .about-links a {
-    color: var(--muted);
-    text-decoration: none;
-    transition: color 0.2s;
-  }
+  .about-subtitle { font-size: 15px; max-width: 480px; line-height: 1.75; color: var(--muted); margin-bottom: 40px; }
+  .about-links { display: flex; gap: 32px; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; }
+  .about-links a { color: var(--muted); text-decoration: none; transition: color 0.2s; }
   .about-links a:hover { color: var(--ink); }
 
   .back-btn {
     position: absolute; top: 32px; left: 32px;
     font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
-    background: none; border: none; color: var(--muted); cursor: pointer;
+    background: none; border: none; color: var(--muted); cursor: pointer; transition: color 0.15s;
   }
   .back-btn:hover { color: var(--ink); }
 
-  /* Gallery */
+  /* Gallery right panel */
   .gallery-header { padding: 28px 20px 10px; display: flex; justify-content: space-between; align-items: baseline; position: sticky; top: 0; z-index: 5; }
-  .gallery-header-label, .gallery-sort-toggle, .theme-toggle { font-size: 9px; letter-spacing: 0.08em; color: var(--muted); cursor: pointer; background: none; border: none; text-transform: uppercase; }
+  .gallery-header-label, .gallery-sort-toggle, .theme-toggle {
+    font-size: 9px; letter-spacing: 0.08em; color: var(--muted); cursor: pointer;
+    background: none; border: none; font-family: var(--mono); text-transform: uppercase; transition: color 0.15s;
+  }
   .gallery-header-label:hover, .gallery-sort-toggle:hover, .theme-toggle:hover { color: var(--ink); }
 
   .gallery-grid { display: flex; flex-direction: column; }
   .gallery-item { border-bottom: 1px solid var(--border); position: relative; overflow: hidden; cursor: pointer; }
-  .gallery-img { width: 100%; aspect-ratio: 4/3; object-fit: cover; transition: opacity 0.2s; }
+  .gallery-img { width: 100%; aspect-ratio: 4/3; object-fit: cover; transition: opacity 0.2s; display: block; }
   .gallery-item:hover .gallery-img { opacity: 0.85; }
-  .gallery-item-meta { padding: 8px 14px 10px; display: flex; justify-content: space-between; align-items: baseline; opacity: 0; transition: opacity 0.25s ease; pointer-events: none; }
-  .gallery-item.text-visible .gallery-item-meta { opacity: 1; pointer-events: auto; }
-  .gallery-item-caption { font-size: 10px; color: var(--muted); max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .gallery-item-date { font-size: 9px; color: var(--border); flex-shrink: 0; }
+  .gallery-item-meta { padding: 6px 14px 8px; display: flex; justify-content: flex-end; align-items: baseline; }
+  .gallery-item-caption { display: none; }
+  .gallery-item-date { font-size: 9px; color: var(--muted); flex-shrink: 0; }
 
-  .pin-btn { position: absolute; top: 8px; right: 8px; background: var(--glass-bg); border: 1px solid var(--glass-border); font-family: var(--mono); font-size: 8px; letter-spacing: 0.08em; text-transform: uppercase; padding: 3px 7px; cursor: pointer; opacity: 0; transition: opacity 0.15s; z-index: 3; }
+  .pin-btn {
+    position: absolute; top: 8px; right: 8px; background: var(--glass-bg);
+    border: 1px solid var(--glass-border); font-family: var(--mono); font-size: 8px;
+    letter-spacing: 0.08em; text-transform: uppercase; padding: 3px 7px; cursor: pointer;
+    opacity: 0; transition: opacity 0.15s; z-index: 3;
+  }
   .gallery-item:hover .pin-btn { opacity: 1; }
   .pin-btn:hover, .pin-btn.pinned-active { background: var(--ink); color: var(--bg); opacity: 1; }
+  .empty-gallery { padding: 40px 20px; font-size: 11px; color: var(--muted); text-align: center; }
 
-  .post { 
-    margin-bottom: 36px; 
-    padding-bottom: 32px; 
-    border-bottom: 1px solid var(--border); 
-    max-width: 620px;
-  }
+  /* Posts */
+  .post { margin-bottom: 36px; padding-bottom: 32px; border-bottom: 1px solid var(--border); max-width: 620px; }
   .post:last-child { border-bottom: none; padding-bottom: 0; margin-bottom: 0; }
   .post-meta { font-size: 10px; color: var(--muted); margin-bottom: 12px; }
   .post-text { font-size: 13px; line-height: 1.85; white-space: pre-wrap; font-weight: 300; }
-
   .post-image-thumb {
-    margin-top: 16px; 
-    width: 100%; 
-    max-width: 320px; 
-    aspect-ratio: 4/3;
-    object-fit: cover; 
-    cursor: pointer; 
-    border: 1px solid var(--border); 
-    transition: opacity 0.2s; 
-    display: block;
+    margin-top: 16px; width: 100%; max-width: 320px; aspect-ratio: 4/3;
+    object-fit: cover; cursor: pointer; border: 1px solid var(--border); transition: opacity 0.2s; display: block;
   }
+  .post-image-thumb:hover { opacity: 0.8; }
 
-  /* Compose bar - EXACTLY like your light screenshot */
-  .compose-bar { 
-    position: fixed; 
-    bottom: 0; 
-    left: var(--panel-left); 
-    right: var(--panel-right); 
-    background: #f5f2eb; 
-    border-top: 1px solid #d8d4cc; 
-    padding: 14px 28px; 
-    display: flex; 
-    gap: 12px; 
-    align-items: flex-start; 
-    z-index: 300; 
+  /* Compose bar */
+  .compose-bar {
+    position: fixed; bottom: 0; left: var(--panel-left); right: var(--panel-right);
+    background: var(--bg); border-top: 1px solid var(--border); border-right: 1px solid var(--border);
+    padding: 14px 28px; display: flex; gap: 12px; align-items: flex-start; z-index: 300;
   }
-  .compose-area { 
-    flex: 1; 
-    font-family: var(--mono); 
-    font-size: 13px; 
-    background: #fff; 
-    border: 1px solid #d8d4cc; 
-    border-radius: 3px; 
-    outline: none; 
-    resize: none; 
-    color: var(--ink); 
-    min-height: 42px; 
-    max-height: 120px; 
-    line-height: 1.6; 
-    padding: 10px 14px;
+  .compose-area {
+    flex: 1; font-family: var(--mono); font-size: 12px; background: var(--bg);
+    border: 1px solid var(--border); outline: none; resize: none; color: var(--ink);
+    min-height: 42px; max-height: 120px; line-height: 1.6; padding: 10px 14px;
   }
-  .compose-area::placeholder { color: #888; }
+  .compose-area:focus { border-color: var(--ink); }
+  .compose-area::placeholder { color: var(--muted); }
   .compose-actions { display: flex; flex-direction: column; gap: 6px; align-items: flex-end; }
-  .compose-btn { 
-    font-family: var(--mono); 
-    font-size: 10px; 
-    letter-spacing: 0.06em; 
-    text-transform: uppercase; 
-    padding: 8px 20px; 
-    background: #1a1a1a; 
-    color: #fff; 
-    border: none; 
-    cursor: pointer; 
+  .compose-btn {
+    font-family: var(--mono); font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase;
+    padding: 8px 20px; background: var(--ink); color: var(--bg); border: none; cursor: pointer; transition: background 0.15s;
   }
-  .compose-img-btn { 
-    font-family: var(--mono); 
-    font-size: 10px; 
-    letter-spacing: 0.06em; 
-    color: #666; 
-    background: transparent; 
-    border: 1px solid #d8d4cc; 
-    padding: 8px 14px; 
-    cursor: pointer; 
+  .compose-btn:hover { background: var(--accent); }
+  .compose-img-btn {
+    font-family: var(--mono); font-size: 10px; letter-spacing: 0.06em;
+    color: var(--muted); background: transparent; border: 1px solid var(--border);
+    padding: 8px 14px; cursor: pointer; transition: border-color 0.15s, color 0.15s;
   }
+  .compose-img-btn:hover { border-color: var(--ink); color: var(--ink); }
   #file-input { display: none; }
   .compose-preview { margin-top: 8px; display: flex; gap: 8px; flex-wrap: wrap; }
   .compose-preview-thumb { width: 52px; height: 52px; object-fit: cover; border: 1px solid var(--border); cursor: pointer; }
+
+  /* ══ GALLERY PAGE ══ */
+  #gallery-page {
+    display: none; height: 100vh; width: 100%; flex-direction: row; background: var(--bg);
+  }
+  #gallery-page.active { display: flex; }
+
+  #gallery-topbar {
+    position: fixed; top: 0; left: 0; right: 0; height: 48px;
+    border-bottom: 1px solid var(--border); background: var(--bg);
+    display: flex; align-items: center; padding: 0 24px; gap: 20px; z-index: 200;
+  }
+  .gallery-back-btn {
+    font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
+    background: none; border: none; color: var(--muted); cursor: pointer; transition: color 0.15s; padding: 0;
+  }
+  .gallery-back-btn:hover { color: var(--ink); }
+  .gallery-page-title { font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+  .gallery-page-count { font-size: 9px; color: var(--muted); margin-left: auto; letter-spacing: 0.04em; }
+
+  #gallery-viewer {
+    flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 70px 64px 24px; position: relative; min-width: 0;
+  }
+  #gallery-main-img { max-width: 100%; max-height: calc(100vh - 200px); object-fit: contain; display: block; }
+
+  .gallery-nav-btn {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    background: var(--bg); border: 1px solid var(--border); font-family: var(--mono);
+    font-size: 20px; color: var(--ink); width: 44px; height: 44px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; transition: background 0.15s; z-index: 10;
+  }
+  .gallery-nav-btn:hover { background: var(--ink); color: var(--bg); }
+  #gallery-prev { left: 12px; }
+  #gallery-next { right: 12px; }
+
+  #gallery-img-caption { margin-top: 16px; font-size: 12px; color: var(--muted); text-align: center; max-width: 520px; line-height: 1.7; font-weight: 300; }
+  #gallery-img-date { margin-top: 6px; font-size: 10px; color: var(--border); text-align: center; }
+
+  #gallery-thumbs {
+    width: 200px; min-width: 200px; height: 100vh; padding-top: 48px;
+    border-left: 1px solid var(--border); overflow-y: auto; background: var(--bg);
+    display: flex; flex-direction: column;
+  }
+  #gallery-thumbs::-webkit-scrollbar { width: 3px; }
+  #gallery-thumbs::-webkit-scrollbar-thumb { background: var(--border); }
+
+  .thumb-item { flex-shrink: 0; cursor: pointer; border-bottom: 1px solid var(--border); position: relative; overflow: hidden; }
+  .thumb-item img { width: 100%; aspect-ratio: 4/3; object-fit: cover; display: block; transition: opacity 0.15s; }
+  .thumb-item:hover img { opacity: 0.75; }
+  .thumb-item.active::after { content: ''; position: absolute; inset: 0; border: 2px solid var(--ink); pointer-events: none; }
+  .thumb-item-label { padding: 5px 8px 6px; font-size: 9px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  #gallery-empty-page { display: none; align-items: center; justify-content: center; height: 100%; font-size: 12px; color: var(--muted); }
 </style>
 </head>
 <body>
@@ -246,29 +245,39 @@
     <div class="site-name">ARCHIVE</div>
     <div class="site-tagline">a personal archive of thoughts, images, and fragments.</div>
 
-    <div class="left-section-label">NAVIGATION</div>
-    <div class="left-nav-link" onclick="showMainView()">HOME</div>
-    <div class="left-nav-link" onclick="showAboutPage()">ABOUT</div>
-    <div class="left-nav-link" onclick="openGalleryPage()">GALLERY</div>
+    <div class="left-section-label">Navigation</div>
+    <div class="left-nav-link" onclick="showMainView()">Home</div>
+    <div class="left-nav-link" onclick="showAboutPage()">About</div>
+    <div class="left-nav-link" onclick="openGalleryPage()">Gallery</div>
 
-    <div class="left-section-label">POSTS</div>
+    <div class="left-section-label">Posts</div>
     <div id="archive-index"></div>
 
     <div class="left-spacer"></div>
-    <div class="left-section-label">SOCIAL</div>
+    <div class="left-section-label">Social</div>
     <a class="social-link" href="#">x.com/handle</a>
     <a class="social-link" href="#">instagram</a>
   </aside>
 
   <main id="panel-mid">
     <div id="posts-container"></div>
+    <div class="compose-bar">
+      <div style="flex:1;display:flex;flex-direction:column;gap:6px;">
+        <textarea class="compose-area" id="compose-text" rows="2" placeholder="write something..."></textarea>
+        <div class="compose-preview" id="compose-preview"></div>
+      </div>
+      <div class="compose-actions">
+        <button class="compose-btn" onclick="publishPost()">POST</button>
+        <button class="compose-img-btn" onclick="document.getElementById('file-input').click()">+ IMG</button>
+      </div>
+    </div>
   </main>
 
   <aside id="panel-right">
     <div class="gallery-header">
-      <span class="gallery-header-label" onclick="openGalleryPage()">GALLERY</span>
-      <div style="display:flex; gap:14px;">
-        <button class="gallery-sort-toggle" onclick="toggleGallerySort()"><span id="sort-label">CHRONOLOGICAL</span></button>
+      <span class="gallery-header-label" onclick="openGalleryPage()">Gallery</span>
+      <div style="display:flex;gap:14px;">
+        <button class="gallery-sort-toggle" onclick="toggleGallerySort()"><span id="sort-label">Chronological</span></button>
         <button class="theme-toggle" onclick="toggleNightMode()" id="night-btn"><span id="night-icon">🌙</span></button>
         <button class="theme-toggle" onclick="cycleCalmMode()" id="calm-btn"><span id="calm-icon">🌫️</span></button>
       </div>
@@ -278,17 +287,35 @@
   </aside>
 </div>
 
+<input type="file" id="file-input" accept="image/*" multiple onchange="handleImageSelect(event)" style="display:none;">
+
 <!-- About Page -->
 <div id="about-page">
-  <button class="back-btn" onclick="hideAboutPage()">← BACK</button>
+  <button class="back-btn" onclick="hideAboutPage()">← Back</button>
   <div class="about-title">Cloudy Writes</div>
-  <div class="about-subtitle">
-    A personal space for my art, writing,<br>and half-formed ideas.
-  </div>
+  <div class="about-subtitle">A personal space for my art, writing,<br>and half-formed ideas.</div>
   <div class="about-links">
-    <a href="#" onclick="hideAboutPage(); showMainView(); return false;">POSTS</a>
-    <a href="#" onclick="hideAboutPage(); openGalleryPage(); return false;">GALLERY</a>
+    <a href="#" onclick="hideAboutPage(); showMainView(); return false;">Posts</a>
+    <a href="#" onclick="hideAboutPage(); openGalleryPage(); return false;">Gallery</a>
   </div>
+</div>
+
+<!-- Gallery Page -->
+<div id="gallery-page">
+  <div id="gallery-topbar">
+    <button class="gallery-back-btn" onclick="closeGalleryPage()">← back</button>
+    <span class="gallery-page-title">Gallery</span>
+    <span class="gallery-page-count" id="gallery-page-count"></span>
+  </div>
+  <div id="gallery-viewer">
+    <div id="gallery-empty-page">No images uploaded yet.</div>
+    <img id="gallery-main-img" src="" alt="" style="display:none;">
+    <button class="gallery-nav-btn" id="gallery-prev" onclick="galleryNav(-1)" style="display:none;">←</button>
+    <button class="gallery-nav-btn" id="gallery-next" onclick="galleryNav(1)" style="display:none;">→</button>
+    <div id="gallery-img-caption"></div>
+    <div id="gallery-img-date"></div>
+  </div>
+  <div id="gallery-thumbs"></div>
 </div>
 
 <script>
@@ -313,7 +340,6 @@ function loadData() {
   if (localStorage.getItem('archive_posts')) posts = JSON.parse(localStorage.getItem('archive_posts'));
   if (localStorage.getItem('archive_gallery')) galleryImages = JSON.parse(localStorage.getItem('archive_gallery'));
   if (localStorage.getItem('archive_pinned')) galleryPinned = new Set(JSON.parse(localStorage.getItem('archive_pinned')));
-
   if (localStorage.getItem('archive_night') === '1') {
     document.documentElement.classList.add('night-mode');
     document.getElementById('night-icon').textContent = '☀️';
@@ -322,17 +348,431 @@ function loadData() {
   applyCalmMode();
 }
 
+// ── CANVAS CALM MODES ──
+let calmCanvas = null, calmCtx = null, calmRAF = null, calmParticles = [];
+
+function initCalmCanvas() {
+  if (calmCanvas) return;
+  calmCanvas = document.createElement('canvas');
+  calmCanvas.style.cssText = 'position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:1;';
+  document.body.appendChild(calmCanvas);
+  resizeCalmCanvas();
+  window.addEventListener('resize', resizeCalmCanvas);
+}
+
+function resizeCalmCanvas() {
+  if (!calmCanvas) return;
+  calmCanvas.width = window.innerWidth;
+  calmCanvas.height = window.innerHeight;
+}
+
+function destroyCalmCanvas() {
+  if (calmRAF) { cancelAnimationFrame(calmRAF); calmRAF = null; }
+  if (calmCanvas) { calmCanvas.remove(); calmCanvas = null; calmCtx = null; }
+  calmParticles = [];
+}
+
 function applyCalmMode() {
-  document.body.classList.remove('calm-leaves','calm-clouds','calm-rain');
-  if (calmMode === 1) document.body.classList.add('calm-leaves');
-  if (calmMode === 2) document.body.classList.add('calm-clouds');
-  if (calmMode === 3) document.body.classList.add('calm-rain');
+  destroyCalmCanvas();
+  if (calmMode === 0) return;
+  initCalmCanvas();
+  calmCtx = calmCanvas.getContext('2d');
+  calmParticles = [];
+
+  if (calmMode === 1) initLeaves();
+  if (calmMode === 2) initClouds();
+  if (calmMode === 3) initRain();
+  if (calmMode === 4) initDust();
+
+  animateCalmMode();
+}
+
+// MODE 1: Hyper-realistic leaves — enhanced shading, layered gradients, detailed branched veins, surface texture, stem
+function initLeaves() {
+  const leafTypes = [
+    [0.52, 1.0, 0.38, 0.18],  // oval
+    [0.38, 1.0, 0.28, 0.08],  // narrow willow
+    [0.62, 1.0, 0.44, 0.22],  // broad maple-ish
+    [0.44, 1.0, 0.32, 0.12],  // medium
+  ];
+  // Richer autumn palette with more natural variation
+  const palettes = [
+    { fill: '#7a5c2e', vein: '#5a3e1a', shadow: 'rgba(40,20,0,0.22)' },
+    { fill: '#8c6a38', vein: '#6b4a20', shadow: 'rgba(60,30,0,0.18)' },
+    { fill: '#6b5a3a', vein: '#4a3820', shadow: 'rgba(30,18,0,0.25)'  },
+    { fill: '#9c7a44', vein: '#7a5a28', shadow: 'rgba(80,50,0,0.15)' },
+    { fill: '#5a4a2e', vein: '#3a2e18', shadow: 'rgba(20,12,0,0.28)' },
+  ];
+  for (let i = 0; i < 55; i++) {  // slightly more leaves for richer scene
+    const depth = Math.random(); // 0=far, 1=close
+    const lt = leafTypes[Math.floor(Math.random()*leafTypes.length)];
+    const pal = palettes[Math.floor(Math.random()*palettes.length)];
+    const baseSize = 7 + depth * 19;
+    calmParticles.push({
+      x: Math.random() * window.innerWidth,
+      y: -20 - Math.random() * window.innerHeight,
+      size: baseSize,
+      wRatio: lt[0], lRatio: lt[1], curve: lt[2], tip: lt[3],
+      speedX: (Math.random() - 0.5) * (0.4 + depth * 0.8),
+      speedY: 0.35 + depth * 1.1 + Math.random() * 0.6,
+      rotation: Math.random() * Math.PI * 2,
+      rotSpeed: (Math.random() - 0.5) * (0.008 + depth * 0.018),
+      sway: Math.random() * Math.PI * 2,
+      swayAmp: 0.3 + Math.random() * 0.9,
+      swaySpeed: 0.006 + Math.random() * 0.012,
+      tumble: Math.random() * Math.PI * 2,
+      tumbleSpeed: (Math.random() - 0.5) * 0.015,
+      opacity: 0.55 + depth * 0.42,
+      depth,
+      fill: pal.fill, vein: pal.vein, shadow: pal.shadow,
+      numVeins: 5 + Math.floor(Math.random() * 5), // more veins for detail
+    });
+  }
+}
+
+function drawLeaf(ctx, p) {
+  ctx.save();
+  ctx.translate(p.x, p.y);
+  // Tumble in 3D: scale Y to simulate flipping
+  const tumbleFactor = Math.cos(p.tumble);
+  ctx.rotate(p.rotation);
+  ctx.scale(1, tumbleFactor === 0 ? 0.01 : tumbleFactor);
+  ctx.globalAlpha = p.opacity * (0.5 + 0.5 * Math.abs(tumbleFactor));
+
+  const w = p.size * p.wRatio;
+  const h = p.size * p.lRatio;
+  const c = p.curve;
+  const tip = p.tip;
+
+  // Stronger drop shadow for depth
+  ctx.shadowColor = p.shadow;
+  ctx.shadowBlur = 9 * p.depth;
+  ctx.shadowOffsetX = 3 * p.depth;
+  ctx.shadowOffsetY = 5 * p.depth;
+
+  // Leaf body — richer gradient with more shades (lighter on one edge, deeper on the other)
+  const leafGrad = ctx.createLinearGradient(-w, 0, w, 0);
+  leafGrad.addColorStop(0,   p.fill + 'dd');
+  leafGrad.addColorStop(0.38, p.fill + 'ff');
+  leafGrad.addColorStop(0.65, p.fill + 'ee');
+  leafGrad.addColorStop(1,   p.fill + '99');
+  ctx.fillStyle = leafGrad;
+
+  ctx.beginPath();
+  // Right side of leaf (original base shape preserved + slight organic adjustment)
+  ctx.moveTo(0, -h);
+  ctx.bezierCurveTo( w * (c+0.1),  -h * (0.5 - tip),
+                     w,             h * 0.1,
+                     w * 0.2,       h * (0.8 + tip));
+  // Tip at bottom
+  ctx.quadraticCurveTo(0, h * (1 + tip * 2), -w * 0.2, h * (0.8 + tip));
+  // Left side
+  ctx.bezierCurveTo(-w,             h * 0.1,
+                    -w * (c+0.1),  -h * (0.5 - tip),
+                    0,             -h);
+  ctx.closePath();
+  ctx.fill();
+
+  // Subtle inner highlight layer (creates realistic 3D shading and surface variation)
+  ctx.shadowBlur = 0;
+  ctx.shadowOffsetX = 0;
+  ctx.shadowOffsetY = 0;
+  const highlightGrad = ctx.createLinearGradient(-w * 0.65, -h * 0.4, w * 0.65, h * 0.6);
+  highlightGrad.addColorStop(0, 'rgba(255,245,220,0.28)');
+  highlightGrad.addColorStop(0.45, 'rgba(255,245,220,0.09)');
+  highlightGrad.addColorStop(1, 'rgba(255,245,220,0.18)');
+  ctx.fillStyle = highlightGrad;
+
+  const innerScale = 0.84;
+  ctx.beginPath();
+  ctx.moveTo(0, -h * 0.96);
+  ctx.bezierCurveTo( w * (c+0.1) * innerScale,  -h * (0.5 - tip) * innerScale,
+                     w * innerScale,             h * 0.1 * innerScale,
+                     w * 0.2 * innerScale,       h * (0.8 + tip) * innerScale);
+  ctx.quadraticCurveTo(0, h * (1 + tip * 2) * innerScale, -w * 0.2 * innerScale, h * (0.8 + tip) * innerScale);
+  ctx.bezierCurveTo(-w * innerScale,             h * 0.1 * innerScale,
+                    -w * (c+0.1) * innerScale,  -h * (0.5 - tip) * innerScale,
+                    0,                          -h * 0.96);
+  ctx.closePath();
+  ctx.fill();
+
+  // Midrib (thicker at base, more natural taper)
+  ctx.strokeStyle = p.vein + 'cc';
+  ctx.lineWidth = 1.15 * (0.5 + p.depth * 0.75);
+  ctx.beginPath();
+  ctx.moveTo(0, -h * 0.92);
+  ctx.quadraticCurveTo(0, h * 0.18, 0, h * 0.84);
+  ctx.stroke();
+
+  // Side veins — more realistic branching + secondary veins
+  ctx.lineWidth = 0.58 * (0.4 + p.depth * 0.6);
+  ctx.strokeStyle = p.vein + '88';
+  for (let v = 0; v < p.numVeins; v++) {
+    const t = 0.1 + (v / p.numVeins) * 0.78;
+    const vy = -h + t * h * 1.78;
+    const vx = w * 0.78 * Math.sin(t * 1.55);
+    [1, -1].forEach(side => {
+      ctx.beginPath();
+      ctx.moveTo(0, vy);
+      ctx.quadraticCurveTo(side * vx * 0.36, vy + h * 0.07, side * vx, vy + h * 0.17);
+      ctx.stroke();
+
+      // Secondary branching veins (hyper-realistic detail)
+      if (v > 1 && v < p.numVeins - 1 && Math.random() > 0.4) {
+        ctx.lineWidth = 0.32 * (0.4 + p.depth * 0.4);
+        ctx.strokeStyle = p.vein + '66';
+        ctx.beginPath();
+        const branchX = side * vx * 0.58;
+        const branchY = vy + h * 0.09;
+        ctx.moveTo(branchX * 0.75, branchY);
+        ctx.quadraticCurveTo(branchX * 1.18, branchY + h * 0.11, side * vx * 1.28, branchY + h * 0.24);
+        ctx.stroke();
+        ctx.lineWidth = 0.58 * (0.4 + p.depth * 0.6);
+        ctx.strokeStyle = p.vein + '88';
+      }
+    });
+  }
+
+  // Surface texture — faint parallel micro-veins for realistic leaf texture
+  ctx.strokeStyle = p.vein + '44';
+  ctx.lineWidth = 0.24;
+  for (let i = 0; i < 26; i++) {
+    const t = 0.12 + (i / 26) * 0.78;
+    const vy = -h + t * h * 1.72;
+    const vx = w * 0.48 * Math.sin(t * 2.1);
+    ctx.beginPath();
+    ctx.moveTo(-vx * 0.68, vy);
+    ctx.quadraticCurveTo(0, vy + h * 0.04, vx * 0.68, vy);
+    ctx.stroke();
+  }
+
+  // Short stem (petiole) for added realism
+  ctx.strokeStyle = p.vein + 'dd';
+  ctx.lineWidth = 1.75 * (0.5 + p.depth * 0.55);
+  ctx.beginPath();
+  ctx.moveTo(0, -h * 0.92);
+  ctx.lineTo(0, -h * 1.22);
+  ctx.stroke();
+
+  ctx.restore();
+}
+
+function updateLeaf(p) {
+  p.sway += p.swaySpeed;
+  p.tumble += p.tumbleSpeed;
+  p.x += p.speedX + Math.sin(p.sway) * p.swayAmp;
+  p.y += p.speedY;
+  p.rotation += p.rotSpeed + Math.sin(p.sway * 0.7) * 0.003;
+  if (p.y > window.innerHeight + 40) {
+    p.y = -30 - Math.random() * 80;
+    p.x = Math.random() * window.innerWidth;
+  }
+}
+
+
+// MODE 2: Volumetric clouds — layered radial gradients drifting slowly
+function initClouds() {
+  const W = window.innerWidth, H = window.innerHeight;
+  // Large background clouds
+  for (let i = 0; i < 6; i++) {
+    calmParticles.push({
+      type: 'cloud',
+      x: Math.random() * W * 1.4 - W * 0.2,
+      y: H * 0.05 + Math.random() * H * 0.55,
+      speed: 0.12 + Math.random() * 0.18,
+      opacity: 0.06 + Math.random() * 0.09,
+      scaleX: 1.8 + Math.random() * 2.2,
+      scaleY: 0.55 + Math.random() * 0.5,
+      radius: 110 + Math.random() * 140,
+      layer: 0,
+      puffs: genPuffs(5 + Math.floor(Math.random()*4), 110 + Math.random()*140),
+    });
+  }
+  // Mid clouds
+  for (let i = 0; i < 8; i++) {
+    calmParticles.push({
+      type: 'cloud',
+      x: Math.random() * W * 1.4 - W * 0.2,
+      y: H * 0.05 + Math.random() * H * 0.5,
+      speed: 0.22 + Math.random() * 0.28,
+      opacity: 0.09 + Math.random() * 0.13,
+      scaleX: 1.1 + Math.random() * 1.4,
+      scaleY: 0.45 + Math.random() * 0.4,
+      radius: 65 + Math.random() * 90,
+      layer: 1,
+      puffs: genPuffs(4 + Math.floor(Math.random()*3), 65 + Math.random()*90),
+    });
+  }
+  // Wispy foreground streaks
+  for (let i = 0; i < 10; i++) {
+    calmParticles.push({
+      type: 'wisp',
+      x: Math.random() * W,
+      y: H * 0.02 + Math.random() * H * 0.4,
+      speed: 0.35 + Math.random() * 0.45,
+      opacity: 0.04 + Math.random() * 0.07,
+      width: 80 + Math.random() * 220,
+      height: 12 + Math.random() * 28,
+      layer: 2,
+    });
+  }
+}
+
+function genPuffs(count, baseR) {
+  const puffs = [];
+  for (let i = 0; i < count; i++) {
+    const angle = (i / count) * Math.PI * 2;
+    const dist = baseR * (0.2 + Math.random() * 0.45);
+    puffs.push({
+      ox: Math.cos(angle) * dist,
+      oy: Math.sin(angle) * dist * 0.35,
+      r: baseR * (0.38 + Math.random() * 0.45),
+    });
+  }
+  return puffs;
+}
+
+function drawCloud(ctx, p) {
+  ctx.save();
+  if (p.type === 'wisp') {
+    ctx.globalAlpha = p.opacity;
+    const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.width * 0.5);
+    g.addColorStop(0,   'rgba(255,255,255,0.9)');
+    g.addColorStop(0.4, 'rgba(240,245,255,0.4)');
+    g.addColorStop(1,   'rgba(220,235,255,0)');
+    ctx.fillStyle = g;
+    ctx.scale(1, p.height / (p.width * 0.5));
+    ctx.beginPath();
+    ctx.arc(p.x, p.y * (p.width * 0.5) / p.height, p.width * 0.5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+    return;
+  }
+
+  ctx.translate(p.x, p.y);
+  ctx.scale(p.scaleX, p.scaleY);
+
+  // Draw each puff as a soft radial gradient blob
+  const allPuffs = [{ ox: 0, oy: 0, r: p.radius }, ...p.puffs];
+  allPuffs.forEach(puff => {
+    ctx.globalAlpha = p.opacity * (puff.r / p.radius) * 1.1;
+    const g = ctx.createRadialGradient(puff.ox, puff.oy, 0, puff.ox, puff.oy, puff.r);
+    g.addColorStop(0,    'rgba(255,255,255,1)');
+    g.addColorStop(0.35, 'rgba(245,248,255,0.7)');
+    g.addColorStop(0.7,  'rgba(230,238,255,0.25)');
+    g.addColorStop(1,    'rgba(210,225,255,0)');
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.arc(puff.ox, puff.oy, puff.r, 0, Math.PI * 2);
+    ctx.fill();
+  });
+
+  ctx.restore();
+}
+
+function updateCloud(p) {
+  p.x += p.speed;
+  if (p.x > window.innerWidth + 400) {
+    p.x = -400;
+    p.y = window.innerHeight * 0.05 + Math.random() * window.innerHeight * 0.5;
+  }
+}
+
+// MODE 3: Realistic rain
+function initRain() {
+  for (let i = 0; i < 220; i++) {
+    calmParticles.push({
+      x: Math.random() * window.innerWidth,
+      y: Math.random() * window.innerHeight,
+      length: 12 + Math.random() * 22,
+      speed: 14 + Math.random() * 12,
+      opacity: 0.15 + Math.random() * 0.35,
+      width: 0.5 + Math.random() * 0.8,
+      angle: 0.15
+    });
+  }
+}
+
+function drawRain(ctx, p) {
+  ctx.save();
+  ctx.globalAlpha = p.opacity;
+  const grad = ctx.createLinearGradient(p.x, p.y, p.x + Math.sin(p.angle)*p.length, p.y + p.length);
+  grad.addColorStop(0, 'rgba(180,210,255,0)');
+  grad.addColorStop(1, 'rgba(180,210,255,1)');
+  ctx.strokeStyle = grad;
+  ctx.lineWidth = p.width;
+  ctx.beginPath();
+  ctx.moveTo(p.x, p.y);
+  ctx.lineTo(p.x + Math.sin(p.angle)*p.length, p.y + p.length);
+  ctx.stroke();
+  ctx.restore();
+}
+
+function updateRain(p) {
+  p.y += p.speed;
+  p.x += Math.sin(p.angle) * p.speed * 0.3;
+  if (p.y > window.innerHeight) {
+    p.y = -p.length;
+    p.x = Math.random() * window.innerWidth;
+  }
+}
+
+// MODE 4: Floating dust/particles (zen)
+function initDust() {
+  for (let i = 0; i < 80; i++) {
+    calmParticles.push({
+      x: Math.random() * window.innerWidth,
+      y: Math.random() * window.innerHeight,
+      radius: 0.5 + Math.random() * 2.5,
+      speedX: (Math.random() - 0.5) * 0.4,
+      speedY: -0.1 - Math.random() * 0.3,
+      opacity: 0.1 + Math.random() * 0.5,
+      pulse: Math.random() * Math.PI * 2,
+      pulseSpeed: 0.005 + Math.random() * 0.015
+    });
+  }
+}
+
+function drawDust(ctx, p) {
+  ctx.save();
+  ctx.globalAlpha = p.opacity * (0.6 + 0.4 * Math.sin(p.pulse));
+  const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.radius * 2);
+  grad.addColorStop(0, 'rgba(255,240,200,1)');
+  grad.addColorStop(1, 'rgba(255,240,200,0)');
+  ctx.fillStyle = grad;
+  ctx.beginPath();
+  ctx.arc(p.x, p.y, p.radius * 2, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+}
+
+function updateDust(p) {
+  p.x += p.speedX;
+  p.y += p.speedY;
+  p.pulse += p.pulseSpeed;
+  if (p.y < -10) { p.y = window.innerHeight + 10; p.x = Math.random() * window.innerWidth; }
+  if (p.x < -10) p.x = window.innerWidth + 10;
+  if (p.x > window.innerWidth + 10) p.x = -10;
+}
+
+function animateCalmMode() {
+  if (!calmCanvas || !calmCtx) return;
+  calmCtx.clearRect(0, 0, calmCanvas.width, calmCanvas.height);
+
+  calmParticles.forEach(p => {
+    if (calmMode === 1) { updateLeaf(p); drawLeaf(calmCtx, p); }
+    if (calmMode === 2) { updateCloud(p); drawCloud(calmCtx, p); }
+    if (calmMode === 3) { updateRain(p); drawRain(calmCtx, p); }
+    if (calmMode === 4) { updateDust(p); drawDust(calmCtx, p); }
+  });
+
+  calmRAF = requestAnimationFrame(animateCalmMode);
 }
 
 function cycleCalmMode() {
-  calmMode = (calmMode + 1) % 4;
+  calmMode = (calmMode + 1) % 5;
   applyCalmMode();
-  const icons = ['🌫️','🍃','☁️','🌧️'];
+  const icons = ['🌫️','🍃','☁️','🌧️','✨'];
   document.getElementById('calm-icon').textContent = icons[calmMode];
   saveData();
 }
@@ -360,7 +800,7 @@ function seedData() {
   const now = Date.now(), day = 86400000;
   posts = [
     { id: 1, text: `10yo me would think i am cool.\nthat's all i care about.`, timestamp: now - day*3, images: [] },
-    { id: 2, text: `you're not burned out.\nyou're addicted.\n\nnot to work.\nto stimulation.\n\n...`, timestamp: now - day*2, images: [] },
+    { id: 2, text: `you're not burned out.\nyou're addicted.\n\nnot to work.\nto stimulation.\n\nyou aren't tired.\nyou don't lack focus.\nyou simply practice\ndistraction.\nevery waking minute.\n\nscroll. check. tap. swipe.\nagain. again. again.\n\nso when nothing is there your\nbrain thinks something is\nwrong.\n\nsit in silence for 15 minutes.\n\nno phone.\nno music.\nno stimulation.\n\nif it makes you anxious,\nuncomfortable, annoying —\n\ngood.\n\nthat's not failure.\nthat's the point.`, timestamp: now - day*2, images: [] },
     { id: 3, text: `logo and icon set for Die Carz`, timestamp: now - day*1, images: [] }
   ];
   const defs = [
@@ -393,34 +833,28 @@ function renderPosts() {
   const c = document.getElementById('posts-container');
   c.innerHTML = '';
   const sorted = [...posts].sort((a,b) => a.timestamp - b.timestamp);
-  const displayPosts = showAllArchive ? sorted : sorted.slice(0, 6);
+  const display = showAllArchive ? sorted : sorted.slice(0, 6);
 
-  displayPosts.forEach((post, i) => {
+  display.forEach((post, i) => {
     const div = document.createElement('div');
     div.className = 'post';
     div.id = 'post-'+post.id;
-    div.style.animationDelay = (i*0.05)+'s';
     let imgs = '';
+    let hasImages = false;
     post.images?.forEach(img => {
-      if (img.dataUrl) imgs += `<img class="post-image-thumb" src="${img.dataUrl}" onclick="openGalleryPage()" alt="">`;
+      if (img.dataUrl) { imgs += `<img class="post-image-thumb" src="${img.dataUrl}" onclick="openGalleryPage()" alt="">`; hasImages = true; }
     });
-    div.innerHTML = `<div class="post-meta">${formatDate(post.timestamp)}</div><div class="post-text">${escapeHtml(post.text)}</div>${imgs}`;
+    // If post has images, only show the image — text is revealed in the gallery page
+    const textHtml = hasImages ? '' : `<div class="post-text">${escapeHtml(post.text)}</div>`;
+    div.innerHTML = `<div class="post-meta">${formatDate(post.timestamp)}</div>${textHtml}${imgs}`;
     c.appendChild(div);
   });
 
   if (!showAllArchive && sorted.length > 6) {
     const more = document.createElement('div');
-    more.style.marginTop = '20px';
-    more.style.fontSize = '10px';
-    more.style.letterSpacing = '0.08em';
-    more.style.textTransform = 'uppercase';
-    more.style.color = 'var(--accent)';
-    more.style.cursor = 'pointer';
-    more.textContent = 'MORE...';
-    more.onclick = () => {
-      showAllArchive = true;
-      renderPosts();
-    };
+    more.style.cssText = 'margin-top:20px;font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:var(--accent);cursor:pointer;';
+    more.textContent = 'More...';
+    more.onclick = () => { showAllArchive = true; renderPosts(); };
     c.appendChild(more);
   }
 
@@ -447,8 +881,7 @@ function renderArchiveIndex(sorted) {
     ul.className = 'archive-list';
     ps.slice().reverse().forEach(post => {
       const li = document.createElement('li');
-      const prev = post.text.split('\n')[0].slice(0,26);
-      li.textContent = prev + (post.text.length>26?'…':'');
+      li.textContent = post.text.split('\n')[0].slice(0,26) + (post.text.length>26?'…':'');
       li.onclick = () => document.getElementById('post-'+post.id)?.scrollIntoView({behavior:'smooth',block:'start'});
       ul.appendChild(li);
     });
@@ -487,623 +920,112 @@ function renderGallery() {
     item.appendChild(pb);
     item.appendChild(meta);
 
-    gi.addEventListener('click', (e) => {
-      e.stopPropagation();
-      item.classList.toggle('text-visible');
-      openGalleryPage(i);
-    });
-
-    pb.addEventListener('click', e => { 
-      e.stopPropagation(); 
-      togglePin(img.id); 
-    });
-
+    gi.addEventListener('click', () => openGalleryPage(i));
+    pb.addEventListener('click', e => { e.stopPropagation(); togglePin(img.id); });
     grid.appendChild(item);
   });
 }
 
 function toggleGallerySort() {
   showPinnedFirst = !showPinnedFirst;
-  document.getElementById('sort-label').textContent = showPinnedFirst ? 'PINNED FIRST' : 'CHRONOLOGICAL';
+  document.getElementById('sort-label').textContent = showPinnedFirst ? 'Pinned first' : 'Chronological';
   renderGallery();
 }
 
 function togglePin(id) {
   galleryPinned.has(id) ? galleryPinned.delete(id) : galleryPinned.add(id);
   renderGallery();
+  if (document.getElementById('gallery-page').classList.contains('active')) renderGalleryPage();
   saveData();
 }
 
+// ── GALLERY PAGE ──
 function openGalleryPage(startIndex) {
   currentGalleryIndex = (startIndex !== undefined) ? startIndex : 0;
   document.getElementById('main-view').style.display = 'none';
-  document.getElementById('gallery-page').style.display = 'flex';
+  document.getElementById('about-page').classList.remove('active');
+  document.getElementById('gallery-page').classList.add('active');
   renderGalleryPage();
 }
 
 function closeGalleryPage() {
-  document.getElementById('gallery-page').style.display = 'none';
+  document.getElementById('gallery-page').classList.remove('active');
   document.getElementById('main-view').style.display = 'flex';
-  document.querySelectorAll('.gallery-item').forEach(item => item.classList.remove('text-visible'));
 }
 
 function renderGalleryPage() {
-  // Placeholder
-}
+  const images = getSortedImages();
+  const mainImg = document.getElementById('gallery-main-img');
+  const emptyEl = document.getElementById('gallery-empty-page');
+  const thumbsEl = document.getElementById('gallery-thumbs');
+  const countEl = document.getElementById('gallery-page-count');
+  const captionEl = document.getElementById('gallery-img-caption');
+  const dateEl = document.getElementById('gallery-img-date');
+  const prevBtn = document.getElementById('gallery-prev');
+  const nextBtn = document.getElementById('gallery-next');
 
-function handleImageSelect(event) {
-  Array.from(event.target.files).forEach(file => {
-    const reader = new FileReader();
-    reader.onload = e => { 
-      pendingImageData.push({dataUrl: e.target.result, caption:''}); 
-      renderComposePreviews(); 
-    };
-    reader.readAsDataURL(file);
+  if (images.length === 0) {
+    mainImg.style.display = 'none';
+    emptyEl.style.display = 'flex';
+    prevBtn.style.display = 'none';
+    nextBtn.style.display = 'none';
+    countEl.textContent = '';
+    captionEl.textContent = '';
+    dateEl.textContent = '';
+    thumbsEl.innerHTML = '';
+    return;
+  }
+
+  emptyEl.style.display = 'none';
+  mainImg.style.display = 'block';
+  prevBtn.style.display = 'flex';
+  nextBtn.style.display = 'flex';
+
+  if (currentGalleryIndex >= images.length) currentGalleryIndex = 0;
+  if (currentGalleryIndex < 0) currentGalleryIndex = images.length - 1;
+
+  const img = images[currentGalleryIndex];
+  mainImg.src = img.dataUrl;
+  captionEl.textContent = img.caption || '';
+  dateEl.textContent = formatDate(img.timestamp);
+  countEl.textContent = `${currentGalleryIndex+1} / ${images.length}`;
+
+  thumbsEl.innerHTML = '';
+  images.forEach((im, i) => {
+    const item = document.createElement('div');
+    item.className = 'thumb-item' + (i===currentGalleryIndex?' active':'');
+    const timg = document.createElement('img');
+    timg.src = im.dataUrl;
+    timg.loading = 'lazy';
+    const label = document.createElement('div');
+    label.className = 'thumb-item-label';
+    label.textContent = im.caption || '—';
+    item.appendChild(timg);
+    item.appendChild(label);
+    item.addEventListener('click', () => { currentGalleryIndex = i; renderGalleryPage(); });
+    thumbsEl.appendChild(item);
+    if (i === currentGalleryIndex) setTimeout(() => item.scrollIntoView({block:'nearest'}), 0);
   });
-  event.target.value = '';
 }
 
-function renderComposePreviews() {
-  const preview = document.getElementById('compose-preview');
-  preview.innerHTML = '';
-  pendingImageData.forEach((img, i) => {
-    const el = document.createElement('img');
-    el.src = img.dataUrl;
-    el.className = 'compose-preview-thumb';
-    el.title = 'click to remove';
-    el.onclick = () => { pendingImageData.splice(i,1); renderComposePreviews(); };
-    preview.appendChild(el);
-  });
+function galleryNav(dir) {
+  const images = getSortedImages();
+  currentGalleryIndex = (currentGalleryIndex + dir + images.length) % images.length;
+  renderGalleryPage();
 }
 
-function publishPost() {
-  const text = document.getElementById('compose-text').value.trim();
-  if (!text && pendingImageData.length === 0) return;
-  const now = Date.now();
-  const newPost = { id: now, text, timestamp: now, images: pendingImageData.map(img => ({dataUrl: img.dataUrl, caption: img.caption})) };
-  posts.unshift(newPost);
-  pendingImageData.forEach((img, i) => {
-    galleryImages.unshift({ id:'g'+now+i, dataUrl: img.dataUrl, caption: text||'', timestamp: now, postId: now });
-  });
-  pendingImageData = [];
-  document.getElementById('compose-text').value = '';
-  document.getElementById('compose-preview').innerHTML = '';
-  renderPosts();
-  renderGallery();
-  saveData();
-  setTimeout(() => document.getElementById('panel-mid').scrollTo({top:0,behavior:'smooth'}), 50);
-}
-
-function formatDate(ts) {
-  const d = new Date(ts);
-  return d.toLocaleDateString('en',{day:'2-digit',month:'short',year:'numeric'}) + ' · ' + d.toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit',hour12:false});
-}
-function formatDateShort(ts) { return new Date(ts).toLocaleDateString('en',{day:'2-digit',month:'short'}); }
-function escapeHtml(str) { return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-
-// INIT
-loadData();
-seedData();
-renderPosts();
-renderGallery();
-
-document.getElementById('compose-text').addEventListener('input', function() {
-  this.style.height = 'auto';
-  this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+document.addEventListener('keydown', e => {
+  if (!document.getElementById('gallery-page').classList.contains('active')) return;
+  if (e.key === 'ArrowLeft') galleryNav(-1);
+  if (e.key === 'ArrowRight') galleryNav(1);
+  if (e.key === 'Escape') closeGalleryPage();
 });
-</script>
-</body>
-</html> 340px;
-    --mono: 'IBM Plex Mono', monospace;
-    --glass-bg: rgba(255,255,255,0.12);
-    --glass-border: rgba(255,255,255,0.18);
-  }
 
-  .night-mode {
-    --bg: #0a0a0a;
-    --ink: #f0f0f0;
-    --muted: #aaaaaa;
-    --border: #222222;
-    --accent: #ff5e4f;
-    --glass-bg: rgba(255,255,255,0.08);
-    --glass-border: rgba(255,255,255,0.15);
-  }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  body {
-    background: var(--bg);
-    color: var(--ink);
-    font-family: var(--mono);
-    height: 100vh;
-    overflow: hidden;
-    position: relative;
-  }
-
-  /* Calming backgrounds */
-  body.calm-leaves::before, body.calm-clouds::before, body.calm-rain::before {
-    content: ''; position: fixed; inset: 0; z-index: -1; pointer-events: none;
-  }
-  body.calm-leaves::before { background: radial-gradient(circle at 30% 20%, rgba(255,240,180,0.28) 0%, transparent 55%), radial-gradient(circle at 70% 60%, rgba(180,255,200,0.25) 0%, transparent 65%); animation: sunnyLight 28s linear infinite; }
-  body.calm-leaves::after { content: '🍃 🌿 🍂 🌱'; position: fixed; inset: 0; z-index: -1; font-size: 42px; opacity: 0.14; animation: floatingLeaves 42s linear infinite; white-space: pre; }
-  body.calm-clouds::before { background: radial-gradient(circle at 20% 30%, rgba(240,240,255,0.38) 0%, transparent 70%), radial-gradient(circle at 80% 50%, rgba(220,240,255,0.32) 0%, transparent 65%); animation: slowDrift 70s linear infinite; }
-  body.calm-clouds::after { content: '☁️  ☁️  ☁️'; position: fixed; inset: 0; z-index: -1; font-size: 58px; opacity: 0.09; animation: floatingClouds 75s linear infinite; white-space: pre; }
-  body.calm-rain::before { background: linear-gradient(to bottom, rgba(180,220,255,0.22) 0%, transparent 75%); animation: rainMist 20s linear infinite; }
-  body.calm-rain::after { content: '🌧️ 🌧️'; position: fixed; inset: 0; z-index: -1; font-size: 26px; opacity: 0.11; animation: lightRain 14s linear infinite; white-space: pre; }
-
-  @keyframes sunnyLight { 0% { transform: translate(0,0); } 100% { transform: translate(15px,-18px); } }
-  @keyframes floatingLeaves { 0% { transform: translateY(130vh) rotate(0deg); } 100% { transform: translateY(-130vh) rotate(360deg); } }
-  @keyframes slowDrift { 0% { transform: translate(0,0); } 100% { transform: translate(25px,-30px); } }
-  @keyframes floatingClouds { 0% { transform: translateY(110vh); } 100% { transform: translateY(-110vh); } }
-  @keyframes rainMist { 0% { transform: translateY(0); } 100% { transform: translateY(-40px); } }
-  @keyframes lightRain { 0% { transform: translateY(0); } 100% { transform: translateY(-90vh); } }
-
-  #main-view { display: flex; height: 100vh; width: 100%; }
-
-  #panel-left, #panel-mid, #panel-right, .compose-bar, .gallery-header, .gallery-item {
-    background: var(--glass-bg);
-    backdrop-filter: blur(20px);
-    border: 1px solid var(--glass-border);
-  }
-
-  #panel-left { width: var(--panel-left); min-width: var(--panel-left); height: 100vh; display: flex; flex-direction: column; padding: 28px 20px; overflow-y: auto; border-right: none; }
-  #panel-mid { flex: 1; height: 100vh; overflow-y: scroll; padding: 28px 40px 120px; border-right: none; }
-  #panel-right { width: var(--panel-right); min-width: var(--panel-right); height: 100vh; overflow-y: scroll; border-left: none; }
-
-  .site-name { font-size: 22px; font-weight: 500; letter-spacing: -0.02em; margin-bottom: 14px; }
-  .site-tagline { font-size: 11px; color: var(--muted); line-height: 1.6; margin-bottom: 28px; font-weight: 300; }
-
-  .left-section-label { font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin: 24px 0 8px; }
-  .left-nav-link { font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); cursor: pointer; margin-bottom: 8px; display: block; }
-  .left-nav-link:hover { color: var(--ink); }
-
-  .archive-list li { font-size: 10.5px; padding: 3px 0; cursor: pointer; transition: color 0.15s; color: var(--ink); }
-  .archive-list li:hover { color: var(--accent); }
-
-  /* About Page */
-  #about-page {
-    display: none; position: fixed; inset: 0; background: var(--bg); flex-direction: column;
-    align-items: center; justify-content: center; padding: 80px 40px; text-align: center; z-index: 100;
-  }
-  #about-page.active { display: flex; }
-
-  .about-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 88px;
-    font-style: italic;
-    font-weight: 400;
-    letter-spacing: -0.05em;
-    line-height: 1.05;
-    color: var(--ink);
-    margin-bottom: 32px;
-  }
-
-  .about-subtitle {
-    font-size: 15px;
-    max-width: 480px;
-    line-height: 1.75;
-    color: var(--muted);
-    margin-bottom: 40px;
-  }
-
-  .about-links {
-    display: flex;
-    gap: 32px;
-    font-size: 11px;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-  }
-  .about-links a {
-    color: var(--muted);
-    text-decoration: none;
-    transition: color 0.2s;
-  }
-  .about-links a:hover { color: var(--ink); }
-
-  .back-btn {
-    position: absolute; top: 32px; left: 32px;
-    font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
-    background: none; border: none; color: var(--muted); cursor: pointer;
-  }
-  .back-btn:hover { color: var(--ink); }
-
-  /* Gallery */
-  .gallery-header { padding: 28px 20px 10px; display: flex; justify-content: space-between; align-items: baseline; position: sticky; top: 0; z-index: 5; }
-  .gallery-header-label, .gallery-sort-toggle, .theme-toggle { font-size: 9px; letter-spacing: 0.08em; color: var(--muted); cursor: pointer; background: none; border: none; text-transform: uppercase; }
-  .gallery-header-label:hover, .gallery-sort-toggle:hover, .theme-toggle:hover { color: var(--ink); }
-
-  .gallery-grid { display: flex; flex-direction: column; }
-  .gallery-item { border-bottom: 1px solid var(--border); position: relative; overflow: hidden; cursor: pointer; }
-  .gallery-img { width: 100%; aspect-ratio: 4/3; object-fit: cover; transition: opacity 0.2s; }
-  .gallery-item:hover .gallery-img { opacity: 0.85; }
-  .gallery-item-meta { padding: 8px 14px 10px; display: flex; justify-content: space-between; align-items: baseline; opacity: 0; transition: opacity 0.25s ease; pointer-events: none; }
-  .gallery-item.text-visible .gallery-item-meta { opacity: 1; pointer-events: auto; }
-  .gallery-item-caption { font-size: 10px; color: var(--muted); max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .gallery-item-date { font-size: 9px; color: var(--border); flex-shrink: 0; }
-
-  .pin-btn { position: absolute; top: 8px; right: 8px; background: var(--glass-bg); border: 1px solid var(--glass-border); font-family: var(--mono); font-size: 8px; letter-spacing: 0.08em; text-transform: uppercase; padding: 3px 7px; cursor: pointer; opacity: 0; transition: opacity 0.15s; z-index: 3; }
-  .gallery-item:hover .pin-btn { opacity: 1; }
-  .pin-btn:hover, .pin-btn.pinned-active { background: var(--ink); color: var(--bg); opacity: 1; }
-
-  .post { 
-    margin-bottom: 36px; 
-    padding-bottom: 32px; 
-    border-bottom: 1px solid var(--border); 
-    max-width: 620px;
-  }
-  .post:last-child { border-bottom: none; padding-bottom: 0; margin-bottom: 0; }
-  .post-meta { font-size: 10px; color: var(--muted); margin-bottom: 12px; }
-  .post-text { font-size: 13px; line-height: 1.85; white-space: pre-wrap; font-weight: 300; }
-
-  .post-image-thumb {
-    margin-top: 16px; 
-    width: 100%; 
-    max-width: 320px; 
-    aspect-ratio: 4/3;
-    object-fit: cover; 
-    cursor: pointer; 
-    border: 1px solid var(--border); 
-    transition: opacity 0.2s; 
-    display: block;
-  }
-
-  /* Compose bar - exactly like your screenshot */
-  .compose-bar { 
-    position: fixed; 
-    bottom: 0; 
-    left: var(--panel-left); 
-    right: var(--panel-right); 
-    background: #f5f2eb; 
-    border-top: 1px solid #d8d4cc; 
-    padding: 12px 28px; 
-    display: flex; 
-    gap: 12px; 
-    align-items: flex-start; 
-    z-index: 300; 
-  }
-  .compose-area { 
-    flex: 1; 
-    font-family: var(--mono); 
-    font-size: 13px; 
-    background: white; 
-    border: 1px solid #d8d4cc; 
-    border-radius: 3px; 
-    outline: none; 
-    resize: none; 
-    color: var(--ink); 
-    min-height: 42px; 
-    max-height: 120px; 
-    line-height: 1.6; 
-    padding: 10px 14px;
-  }
-  .compose-area::placeholder { color: #888; }
-  .compose-actions { display: flex; flex-direction: column; gap: 6px; align-items: flex-end; }
-  .compose-btn { 
-    font-family: var(--mono); 
-    font-size: 10px; 
-    letter-spacing: 0.06em; 
-    text-transform: uppercase; 
-    padding: 8px 20px; 
-    background: #1a1a1a; 
-    color: #fff; 
-    border: none; 
-    cursor: pointer; 
-  }
-  .compose-img-btn { 
-    font-family: var(--mono); 
-    font-size: 10px; 
-    letter-spacing: 0.06em; 
-    color: #666; 
-    background: transparent; 
-    border: 1px solid #d8d4cc; 
-    padding: 8px 14px; 
-    cursor: pointer; 
-  }
-  #file-input { display: none; }
-  .compose-preview { margin-top: 8px; display: flex; gap: 8px; flex-wrap: wrap; }
-  .compose-preview-thumb { width: 52px; height: 52px; object-fit: cover; border: 1px solid var(--border); cursor: pointer; }
-</style>
-</head>
-<body>
-
-<div id="main-view">
-  <aside id="panel-left">
-    <div class="site-name">ARCHIVE</div>
-    <div class="site-tagline">a personal archive of thoughts, images, and fragments.</div>
-
-    <div class="left-section-label">NAVIGATION</div>
-    <div class="left-nav-link" onclick="showMainView()">HOME</div>
-    <div class="left-nav-link" onclick="showAboutPage()">ABOUT</div>
-    <div class="left-nav-link" onclick="openGalleryPage()">GALLERY</div>
-
-    <div class="left-section-label">POSTS</div>
-    <div id="archive-index"></div>
-
-    <div class="left-spacer"></div>
-    <div class="left-section-label">SOCIAL</div>
-    <a class="social-link" href="#">x.com/handle</a>
-    <a class="social-link" href="#">instagram</a>
-  </aside>
-
-  <main id="panel-mid">
-    <div id="posts-container"></div>
-  </main>
-
-  <aside id="panel-right">
-    <div class="gallery-header">
-      <span class="gallery-header-label" onclick="openGalleryPage()">GALLERY</span>
-      <div style="display:flex; gap:14px;">
-        <button class="gallery-sort-toggle" onclick="toggleGallerySort()"><span id="sort-label">CHRONOLOGICAL</span></button>
-        <button class="theme-toggle" onclick="toggleNightMode()" id="night-btn"><span id="night-icon">🌙</span></button>
-        <button class="theme-toggle" onclick="cycleCalmMode()" id="calm-btn"><span id="calm-icon">🌫️</span></button>
-      </div>
-    </div>
-    <div class="gallery-grid" id="gallery-grid"></div>
-    <div class="empty-gallery" id="gallery-empty" style="display:none;">no images yet.</div>
-  </aside>
-</div>
-
-<!-- About Page -->
-<div id="about-page">
-  <button class="back-btn" onclick="hideAboutPage()">← BACK</button>
-  <div class="about-title">Cloudy Writes</div>
-  <div class="about-subtitle">
-    A personal space for my art, writing,<br>and half-formed ideas.
-  </div>
-  <div class="about-links">
-    <a href="#" onclick="hideAboutPage(); showMainView(); return false;">POSTS</a>
-    <a href="#" onclick="hideAboutPage(); openGalleryPage(); return false;">GALLERY</a>
-  </div>
-</div>
-
-<script>
-/* Full working script */
-let posts = [];
-let galleryImages = [];
-let galleryPinned = new Set();
-let showPinnedFirst = false;
-let pendingImageData = [];
-let currentGalleryIndex = 0;
-let calmMode = 0;
-let showAllArchive = false;
-
-function saveData() {
-  localStorage.setItem('archive_posts', JSON.stringify(posts));
-  localStorage.setItem('archive_gallery', JSON.stringify(galleryImages));
-  localStorage.setItem('archive_pinned', JSON.stringify(Array.from(galleryPinned)));
-  localStorage.setItem('archive_night', document.documentElement.classList.contains('night-mode') ? '1' : '0');
-  localStorage.setItem('archive_calm', calmMode.toString());
-}
-
-function loadData() {
-  if (localStorage.getItem('archive_posts')) posts = JSON.parse(localStorage.getItem('archive_posts'));
-  if (localStorage.getItem('archive_gallery')) galleryImages = JSON.parse(localStorage.getItem('archive_gallery'));
-  if (localStorage.getItem('archive_pinned')) galleryPinned = new Set(JSON.parse(localStorage.getItem('archive_pinned')));
-
-  if (localStorage.getItem('archive_night') === '1') {
-    document.documentElement.classList.add('night-mode');
-    document.getElementById('night-icon').textContent = '☀️';
-  }
-  calmMode = parseInt(localStorage.getItem('archive_calm') || '0');
-  applyCalmMode();
-}
-
-function applyCalmMode() {
-  document.body.classList.remove('calm-leaves','calm-clouds','calm-rain');
-  if (calmMode === 1) document.body.classList.add('calm-leaves');
-  if (calmMode === 2) document.body.classList.add('calm-clouds');
-  if (calmMode === 3) document.body.classList.add('calm-rain');
-}
-
-function cycleCalmMode() {
-  calmMode = (calmMode + 1) % 4;
-  applyCalmMode();
-  const icons = ['🌫️','🍃','☁️','🌧️'];
-  document.getElementById('calm-icon').textContent = icons[calmMode];
-  saveData();
-}
-
-function toggleNightMode() {
-  const isNight = document.documentElement.classList.toggle('night-mode');
-  document.getElementById('night-icon').textContent = isNight ? '☀️' : '🌙';
-  saveData();
-}
-
-function showMainView() {
-  document.getElementById('about-page').classList.remove('active');
-}
-
-function showAboutPage() {
-  document.getElementById('about-page').classList.add('active');
-}
-
-function hideAboutPage() {
-  document.getElementById('about-page').classList.remove('active');
-}
-
-function seedData() {
-  if (posts.length > 0) return;
-  const now = Date.now(), day = 86400000;
-  posts = [
-    { id: 1, text: `10yo me would think i am cool.\nthat's all i care about.`, timestamp: now - day*3, images: [] },
-    { id: 2, text: `you're not burned out.\nyou're addicted.\n\nnot to work.\nto stimulation.\n\n...`, timestamp: now - day*2, images: [] },
-    { id: 3, text: `logo and icon set for Die Carz`, timestamp: now - day*1, images: [] }
-  ];
-  const defs = [
-    { sym: 'X', bg: '#2d2d2d', cap: 'logo and icon set — primary mark.' },
-    { sym: '◎', bg: '#4a3728', cap: 'icon set — secondary marks.' },
-    { sym: '▲', bg: '#1a3a2a', cap: 'wordmark variations.' }
-  ];
-  galleryImages = defs.map((d, i) => ({
-    id: 'g'+i, dataUrl: makeSVG(d.sym, d.bg), caption: d.cap,
-    timestamp: now - day*(1 - i*0.2), postId: 3
-  }));
-}
-
-function makeSVG(sym, bg) {
-  const s = `<svg xmlns='http://www.w3.org/2000/svg' width='400' height='300'><rect width='400' height='300' fill='${bg}'/><text x='200' y='170' text-anchor='middle' font-size='100' fill='rgba(255,255,255,0.15)' font-family='monospace'>${sym}</text></svg>`;
-  return 'data:image/svg+xml;base64,' + btoa(s);
-}
-
-function getSortedImages() {
-  let imgs = [...galleryImages];
-  if (showPinnedFirst) {
-    imgs.sort((a,b) => (galleryPinned.has(a.id)?0:1) - (galleryPinned.has(b.id)?0:1) || b.timestamp - a.timestamp);
-  } else {
-    imgs.sort((a,b) => b.timestamp - a.timestamp);
-  }
-  return imgs;
-}
-
-function renderPosts() {
-  const c = document.getElementById('posts-container');
-  c.innerHTML = '';
-  const sorted = [...posts].sort((a,b) => a.timestamp - b.timestamp);
-  const displayPosts = showAllArchive ? sorted : sorted.slice(0, 6);
-
-  displayPosts.forEach((post, i) => {
-    const div = document.createElement('div');
-    div.className = 'post';
-    div.id = 'post-'+post.id;
-    div.style.animationDelay = (i*0.05)+'s';
-    let imgs = '';
-    post.images?.forEach(img => {
-      if (img.dataUrl) imgs += `<img class="post-image-thumb" src="${img.dataUrl}" onclick="openGalleryPage()" alt="">`;
-    });
-    div.innerHTML = `<div class="post-meta">${formatDate(post.timestamp)}</div><div class="post-text">${escapeHtml(post.text)}</div>${imgs}`;
-    c.appendChild(div);
-  });
-
-  if (!showAllArchive && sorted.length > 6) {
-    const more = document.createElement('div');
-    more.style.marginTop = '20px';
-    more.style.fontSize = '10px';
-    more.style.letterSpacing = '0.08em';
-    more.style.textTransform = 'uppercase';
-    more.style.color = 'var(--accent)';
-    more.style.cursor = 'pointer';
-    more.textContent = 'MORE...';
-    more.onclick = () => {
-      showAllArchive = true;
-      renderPosts();
-    };
-    c.appendChild(more);
-  }
-
-  renderArchiveIndex(sorted);
-}
-
-function renderArchiveIndex(sorted) {
-  const c = document.getElementById('archive-index');
-  c.innerHTML = '';
-  const groups = {};
-  sorted.forEach(p => {
-    const k = new Date(p.timestamp).toLocaleString('en', {month:'long',year:'numeric'});
-    if (!groups[k]) groups[k] = [];
-    groups[k].push(p);
-  });
-  Object.entries(groups).reverse().forEach(([month, ps]) => {
-    const g = document.createElement('div');
-    g.className = 'archive-date-group';
-    const m = document.createElement('div');
-    m.className = 'archive-month';
-    m.textContent = month;
-    g.appendChild(m);
-    const ul = document.createElement('ul');
-    ul.className = 'archive-list';
-    ps.slice().reverse().forEach(post => {
-      const li = document.createElement('li');
-      const prev = post.text.split('\n')[0].slice(0,26);
-      li.textContent = prev + (post.text.length>26?'…':'');
-      li.onclick = () => document.getElementById('post-'+post.id)?.scrollIntoView({behavior:'smooth',block:'start'});
-      ul.appendChild(li);
-    });
-    g.appendChild(ul);
-    c.appendChild(g);
-  });
-}
-
-function renderGallery() {
-  const grid = document.getElementById('gallery-grid');
-  const empty = document.getElementById('gallery-empty');
-  grid.innerHTML = '';
-  const images = getSortedImages();
-  if (images.length === 0) { empty.style.display='block'; return; }
-  empty.style.display = 'none';
-
-  images.forEach((img, i) => {
-    const isPinned = galleryPinned.has(img.id);
-    const item = document.createElement('div');
-    item.className = 'gallery-item' + (isPinned?' pinned':'');
-
-    const gi = document.createElement('img');
-    gi.className = 'gallery-img';
-    gi.src = img.dataUrl;
-    gi.loading = 'lazy';
-
-    const pb = document.createElement('button');
-    pb.className = 'pin-btn' + (isPinned?' pinned-active':'');
-    pb.textContent = isPinned ? '↓ Unpin' : '↑ Pin';
-
-    const meta = document.createElement('div');
-    meta.className = 'gallery-item-meta';
-    meta.innerHTML = `<span class="gallery-item-caption">${escapeHtml(img.caption||'')}</span><span class="gallery-item-date">${formatDateShort(img.timestamp)}</span>`;
-
-    item.appendChild(gi);
-    item.appendChild(pb);
-    item.appendChild(meta);
-
-    gi.addEventListener('click', (e) => {
-      e.stopPropagation();
-      item.classList.toggle('text-visible');
-      openGalleryPage(i);
-    });
-
-    pb.addEventListener('click', e => { 
-      e.stopPropagation(); 
-      togglePin(img.id); 
-    });
-
-    grid.appendChild(item);
-  });
-}
-
-function toggleGallerySort() {
-  showPinnedFirst = !showPinnedFirst;
-  document.getElementById('sort-label').textContent = showPinnedFirst ? 'PINNED FIRST' : 'CHRONOLOGICAL';
-  renderGallery();
-}
-
-function togglePin(id) {
-  galleryPinned.has(id) ? galleryPinned.delete(id) : galleryPinned.add(id);
-  renderGallery();
-  saveData();
-}
-
-function openGalleryPage(startIndex) {
-  currentGalleryIndex = (startIndex !== undefined) ? startIndex : 0;
-  document.getElementById('main-view').style.display = 'none';
-  document.getElementById('gallery-page').style.display = 'flex';
-  renderGalleryPage();
-}
-
-function closeGalleryPage() {
-  document.getElementById('gallery-page').style.display = 'none';
-  document.getElementById('main-view').style.display = 'flex';
-  document.querySelectorAll('.gallery-item').forEach(item => item.classList.remove('text-visible'));
-}
-
-function renderGalleryPage() {
-  // Placeholder
-}
-
+// ── COMPOSE ──
 function handleImageSelect(event) {
   Array.from(event.target.files).forEach(file => {
     const reader = new FileReader();
-    reader.onload = e => { 
-      pendingImageData.push({dataUrl: e.target.result, caption:''}); 
-      renderComposePreviews(); 
-    };
+    reader.onload = e => { pendingImageData.push({dataUrl: e.target.result, caption:''}); renderComposePreviews(); };
     reader.readAsDataURL(file);
   });
   event.target.value = '';
@@ -1147,7 +1069,7 @@ function formatDate(ts) {
 function formatDateShort(ts) { return new Date(ts).toLocaleDateString('en',{day:'2-digit',month:'short'}); }
 function escapeHtml(str) { return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
-// INIT
+// ── INIT ──
 loadData();
 seedData();
 renderPosts();
